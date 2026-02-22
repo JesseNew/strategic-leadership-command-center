@@ -366,7 +366,7 @@ document.getElementById('mb').addEventListener('click',()=>document.getElementBy
 mkSections()});
 </script>
 </body>
-<!-- PASTE THIS RIGHT BEFORE </html> AT THE END OF YOUR FILE -->
+<!-- PASTE THIS RIGHT BEFORE </html> - REPLACES PREVIOUS PATCH -->
 <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
 <style>
 .hist-item{padding:12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:.15s}
@@ -374,6 +374,12 @@ mkSections()});
 .hist-date{font-weight:600;color:var(--ac);font-size:13px;margin-bottom:4px}
 .hist-preview{font-size:12px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hist-list{max-height:500px;overflow-y:auto}
+.snap-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center}
+.snap-box{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:24px;width:400px;max-width:90vw}
+.snap-box h3{color:var(--al);margin-bottom:16px}
+.snap-box input{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--t1);font-size:.9rem;margin-bottom:16px}
+.snap-box input:focus{outline:none;border-color:var(--ac)}
+.snap-btns{display:flex;gap:8px;justify-content:flex-end}
 </style>
 <script>
 (function(){
@@ -396,18 +402,21 @@ mkSections=function(){
   var ct=document.getElementById("ct");
   if(!ct)return;
 
-  // Add History section
+  // Remove old hist section if exists (prevents duplicates)
+  var old=document.getElementById("s-hist");
+  if(old)old.remove();
+
   var hd=document.createElement("div");
   hd.className="sc";
   hd.id="s-hist";
   hd.innerHTML='<div class="hd"><h1><i class="fas fa-clock-rotate-left"></i> History</h1><p>Your saved reflections and reports.</p></div>'
     +'<div class="cd"><h3>Save Current Work</h3><p style="color:var(--t2);margin-bottom:12px">Fill out a section, then save a snapshot.</p>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
-    +'<button class="bt" onclick="saveSnapshot(\x27daily\x27)"><i class="fas fa-sun"></i> Daily Reflections</button>'
-    +'<button class="bt" onclick="saveSnapshot(\x27a3\x27)" style="background:var(--in)"><i class="fas fa-file-lines"></i> A3 Report</button>'
-    +'<button class="bt" onclick="saveSnapshot(\x27obs\x27)" style="background:var(--ok)"><i class="fas fa-clipboard-check"></i> Coaching Eval</button>'
-    +'<button class="bt" onclick="saveSnapshot(\x27ceo\x27)" style="background:var(--wn)"><i class="fas fa-user-tie"></i> CEO Prep</button>'
-    +'<button class="bt" onclick="saveSnapshot(\x27bl\x27)" style="background:var(--or)"><i class="fas fa-briefcase"></i> BL Prep</button>'
+    +'<button class="bt" onclick="promptSave(\x27daily\x27)"><i class="fas fa-sun"></i> Daily Reflections</button>'
+    +'<button class="bt" onclick="promptSave(\x27a3\x27)" style="background:var(--in)"><i class="fas fa-file-lines"></i> A3 Report</button>'
+    +'<button class="bt" onclick="promptSave(\x27obs\x27)" style="background:var(--ok)"><i class="fas fa-clipboard-check"></i> Coaching Eval</button>'
+    +'<button class="bt" onclick="promptSave(\x27ceo\x27)" style="background:var(--wn)"><i class="fas fa-user-tie"></i> CEO Prep</button>'
+    +'<button class="bt" onclick="promptSave(\x27bl\x27)" style="background:var(--or)"><i class="fas fa-briefcase"></i> BL Prep</button>'
     +'</div></div>'
     +'<div class="cd"><h3>Saved Entries</h3><div id="histList"></div></div>'
     +'<div class="cd"><h3>Manage</h3><button class="bt" style="background:var(--er)" onclick="if(confirm(\x27Delete ALL history?\x27)){localStorage.removeItem(\x27ves_history\x27);renderHistList()}"><i class="fas fa-trash"></i> Clear All History</button></div>';
@@ -418,17 +427,71 @@ mkSections=function(){
   secs.forEach(function(arr){
     var sec=document.getElementById(arr[0]);
     if(!sec)return;
+    // Don't add duplicate export bars
+    if(sec.querySelector(".xbar"))return;
     var bar=document.createElement("div");
-    bar.className="cd";
+    bar.className="cd xbar";
     bar.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px 24px";
     bar.innerHTML='<span style="font-weight:600;color:var(--al);margin-right:auto"><i class="fas fa-download"></i> Export</span>'
       +'<button class="bt" onclick="exportDocx(\x27'+arr[1]+'\x27,\x27'+arr[0]+'\x27)"><i class="fas fa-file-word"></i> Export to DOCX</button>'
-      +'<button class="bt" style="background:var(--ok)" onclick="saveSnapshot(\x27'+arr[2]+'\x27)"><i class="fas fa-save"></i> Save to History</button>';
+      +'<button class="bt" style="background:var(--ok)" onclick="promptSave(\x27'+arr[2]+'\x27)"><i class="fas fa-save"></i> Save to History</button>';
     sec.appendChild(bar);
   });
 };
 
-// 3. DOCX EXPORT
+// 3. SAVE PROMPT WITH NAME INPUT
+window.promptSave=function(type){
+  var names={daily:"Daily Reflection",a3:"A3 Report",obs:"Coaching Observation",ceo:"CEO Meeting Prep",bl:"Business Leader Prep",str:"Strategic Thinking",fw:"Flywheel"};
+  var modal=document.createElement("div");
+  modal.className="snap-modal";
+  modal.innerHTML='<div class="snap-box">'
+    +'<h3><i class="fas fa-save"></i> Save '+names[type]+'</h3>'
+    +'<label style="display:block;font-size:.8rem;color:var(--t2);margin-bottom:4px">Name this entry:</label>'
+    +'<input type="text" id="snapName" placeholder="e.g. Monday morning reflection, Q1 A3, Session with Alex..." autofocus>'
+    +'<div class="snap-btns">'
+    +'<button class="bt" style="background:var(--bd);color:var(--t1)" onclick="this.closest(\x27.snap-modal\x27).remove()">Cancel</button>'
+    +'<button class="bt" onclick="doSave(\x27'+type+'\x27)"><i class="fas fa-check"></i> Save</button>'
+    +'</div></div>';
+  document.body.appendChild(modal);
+  setTimeout(function(){document.getElementById("snapName").focus();},100);
+};
+
+// 4. ACTUAL SAVE
+window.doSave=function(type){
+  var nameInput=document.getElementById("snapName");
+  var entryName=nameInput?nameInput.value.trim():"";
+  var modal=document.querySelector(".snap-modal");
+  if(modal)modal.remove();
+  saveSnapshot(type,entryName);
+};
+
+window.saveSnapshot=function(type,entryName){
+  var names={daily:"Daily Reflection",a3:"A3 Report",obs:"Coaching Observation",ceo:"CEO Meeting Prep",bl:"Business Leader Prep",str:"Strategic Thinking",fw:"Flywheel"};
+  var sids={daily:"s-dash",a3:"s-a3",obs:"s-obs",ceo:"s-ceo",bl:"s-bl",str:"s-str",fw:"s-fw"};
+  var sec=document.getElementById(sids[type]||"s-dash");
+  var fields={};
+  if(sec){
+    sec.querySelectorAll("textarea").forEach(function(ta){
+      if(ta.value.trim()){
+        var label="Field";
+        var pc=ta.closest(".pc");
+        if(pc){var pq=pc.querySelector(".pq");if(pq)label=pq.textContent.trim();}
+        if(label==="Field"){var fg=ta.closest(".fg");if(fg){var lb=fg.querySelector("label");if(lb)label=lb.textContent.trim();}}
+        if(label==="Field"){var prev=ta.previousElementSibling;if(prev&&prev.tagName==="LABEL")label=prev.textContent.trim();}
+        fields[label]=ta.value.trim();
+      }
+    });
+  }
+  var snap={timestamp:new Date().toISOString(),date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),time:new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}),type:type,typeName:names[type]||type,entryName:entryName||"",fields:fields,fieldCount:Object.keys(fields).length};
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  hist.unshift(snap);
+  if(hist.length>200)hist.splice(200);
+  localStorage.setItem("ves_history",JSON.stringify(hist));
+  alert("Saved "+snap.fieldCount+" fields to History!");
+  renderHistList();
+};
+
+// 5. DOCX EXPORT
 window.exportDocx=function(title,sectionId){
   if(typeof docx==="undefined"){alert("DOCX library still loading. Try again in a few seconds.");return;}
   var sec=document.getElementById(sectionId);
@@ -439,6 +502,7 @@ window.exportDocx=function(title,sectionId){
     new D.Paragraph({children:[new D.TextRun({text:"Date: "+new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),italics:true,size:20,color:"666666",font:"Calibri"})],spacing:{after:400}})
   ];
   sec.querySelectorAll("h1,h3,label,textarea,li").forEach(function(el){
+    if(el.closest(".xbar"))return;
     if(el.tagName==="TEXTAREA"){
       var val=el.value.trim();
       if(val)children.push(new D.Paragraph({children:[new D.TextRun({text:val,size:22,font:"Calibri"})],spacing:{after:120},indent:{left:360}}));
@@ -462,34 +526,7 @@ window.exportDocx=function(title,sectionId){
   });
 };
 
-// 4. SAVE SNAPSHOT
-window.saveSnapshot=function(type){
-  var names={daily:"Daily Reflection",a3:"A3 Report",obs:"Coaching Observation",ceo:"CEO Meeting Prep",bl:"Business Leader Prep",str:"Strategic Thinking",fw:"Flywheel"};
-  var sids={daily:"s-dash",a3:"s-a3",obs:"s-obs",ceo:"s-ceo",bl:"s-bl",str:"s-str",fw:"s-fw"};
-  var sec=document.getElementById(sids[type]||"s-dash");
-  var fields={};
-  if(sec){
-    sec.querySelectorAll("textarea").forEach(function(ta){
-      if(ta.value.trim()){
-        var label="Field";
-        var pc=ta.closest(".pc");
-        if(pc){var pq=pc.querySelector(".pq");if(pq)label=pq.textContent.trim();}
-        if(label==="Field"){var fg=ta.closest(".fg");if(fg){var lb=fg.querySelector("label");if(lb)label=lb.textContent.trim();}}
-        if(label==="Field"){var prev=ta.previousElementSibling;if(prev&&prev.tagName==="LABEL")label=prev.textContent.trim();}
-        fields[label]=ta.value.trim();
-      }
-    });
-  }
-  var snap={timestamp:new Date().toISOString(),date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),time:new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}),type:type,typeName:names[type]||type,fields:fields,fieldCount:Object.keys(fields).length};
-  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
-  hist.unshift(snap);
-  if(hist.length>200)hist.splice(200);
-  localStorage.setItem("ves_history",JSON.stringify(hist));
-  alert("Saved "+snap.fieldCount+" fields to History!");
-  renderHistList();
-};
-
-// 5. RENDER HISTORY
+// 6. RENDER HISTORY LIST
 window.renderHistList=function(){
   var el=document.getElementById("histList");
   if(!el)return;
@@ -499,25 +536,32 @@ window.renderHistList=function(){
   hist.forEach(function(snap,idx){
     var keys=Object.keys(snap.fields);
     var preview=keys.length>0?snap.fields[keys[0]].substring(0,100):"["+snap.fieldCount+" fields]";
+    var title=snap.entryName?snap.entryName:snap.typeName;
     h+='<div class="hist-item" onclick="viewSnapshot('+idx+')">';
-    h+='<div class="hist-date">'+snap.typeName+' &#8212; '+snap.date+' at '+snap.time+'</div>';
+    h+='<div class="hist-date">'+title+' &#8212; '+snap.date+' at '+snap.time+'</div>';
+    if(snap.entryName)h+='<div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">'+snap.typeName+'</div>';
     h+='<div class="hist-preview">'+preview+'</div></div>';
   });
   h+='</div>';
   el.innerHTML=h;
 };
 
-// 6. VIEW SNAPSHOT
+// 7. VIEW SNAPSHOT - shows detail inside s-hist
 window.viewSnapshot=function(idx){
   var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
   var snap=hist[idx];if(!snap)return;
+  // Make sure hist section is visible
   document.querySelectorAll(".sc").forEach(function(s){s.classList.remove("on")});
   var hs=document.getElementById("s-hist");
-  if(hs)hs.classList.add("on");
+  if(!hs)return;
+  hs.classList.add("on");
   document.querySelectorAll(".ni").forEach(function(n){n.classList.remove("on")});
-  var h='<div class="hd"><h1><i class="fas fa-clock-rotate-left"></i> History</h1></div>'
-    +'<div class="cd"><button class="bt" style="background:var(--bd);color:var(--t1)" onclick="go(\x27hist\x27)"><i class="fas fa-arrow-left"></i> Back</button></div>'
-    +'<div class="cd"><h3>'+snap.typeName+'</h3><p style="color:var(--t2);margin-bottom:16px">'+snap.date+' at '+snap.time+'</p>';
+  var title=snap.entryName?snap.entryName:snap.typeName;
+  var h='<div class="hd"><h1><i class="fas fa-clock-rotate-left"></i> '+title+'</h1></div>'
+    +'<div class="cd"><button class="bt" style="background:var(--bd);color:var(--t1)" onclick="backToHistList()"><i class="fas fa-arrow-left"></i> Back to History</button></div>'
+    +'<div class="cd">';
+  if(snap.entryName)h+='<p style="color:var(--t3);font-size:.8rem;margin-bottom:4px">'+snap.typeName+'</p>';
+  h+='<p style="color:var(--t2);margin-bottom:16px">'+snap.date+' at '+snap.time+'</p>';
   Object.keys(snap.fields).forEach(function(key){
     h+='<div style="margin-bottom:16px"><label style="display:block;font-size:.8rem;color:var(--al);margin-bottom:4px;font-weight:600">'+key+'</label>';
     h+='<div style="padding:10px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;color:var(--t1);white-space:pre-wrap;font-size:.85rem">'+snap.fields[key]+'</div></div>';
@@ -530,24 +574,44 @@ window.viewSnapshot=function(idx){
   window.scrollTo(0,0);
 };
 
-// 7. DELETE SNAPSHOT
+// 8. BACK TO HISTORY LIST - rebuilds the history section properly
+window.backToHistList=function(){
+  // Remove the old s-hist so mkSections rebuilds it fresh
+  var old=document.getElementById("s-hist");
+  if(old)old.remove();
+  // Rebuild
+  mkSections();
+  // Now show it
+  document.querySelectorAll(".sc").forEach(function(s){s.classList.remove("on")});
+  var hs=document.getElementById("s-hist");
+  if(hs)hs.classList.add("on");
+  document.querySelectorAll(".ni").forEach(function(n){
+    n.classList.remove("on");
+    if(n.getAttribute("data-s")==="hist")n.classList.add("on");
+  });
+  setTimeout(renderHistList,50);
+  window.scrollTo(0,0);
+};
+
+// 9. DELETE SNAPSHOT
 window.deleteSnapshot=function(idx){
   if(!confirm("Delete this entry?"))return;
   var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
   hist.splice(idx,1);
   localStorage.setItem("ves_history",JSON.stringify(hist));
-  go("hist");
+  backToHistList();
 };
 
-// 8. EXPORT SNAPSHOT DOCX
+// 10. EXPORT SNAPSHOT DOCX
 window.exportSnapshotDocx=function(idx){
   if(typeof docx==="undefined"){alert("DOCX library loading...");return;}
   var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
   var snap=hist[idx];if(!snap)return;
   var D=docx;
+  var title=snap.entryName?snap.entryName:snap.typeName;
   var children=[
-    new D.Paragraph({children:[new D.TextRun({text:snap.typeName,bold:true,size:48,font:"Calibri"})],spacing:{after:100}}),
-    new D.Paragraph({children:[new D.TextRun({text:snap.date+" at "+snap.time,italics:true,size:22,color:"666666",font:"Calibri"})],spacing:{after:400}})
+    new D.Paragraph({children:[new D.TextRun({text:title,bold:true,size:48,font:"Calibri"})],spacing:{after:100}}),
+    new D.Paragraph({children:[new D.TextRun({text:snap.typeName+" \u2014 "+snap.date+" at "+snap.time,italics:true,size:22,color:"666666",font:"Calibri"})],spacing:{after:400}})
   ];
   Object.keys(snap.fields).forEach(function(key){
     children.push(new D.Paragraph({children:[new D.TextRun({text:key,bold:true,size:24,font:"Calibri"})],spacing:{before:200,after:60}}));
@@ -557,12 +621,12 @@ window.exportSnapshotDocx=function(idx){
   D.Packer.toBlob(doc).then(function(blob){
     var a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
-    a.download=snap.typeName.replace(/\s+/g,"_")+"_"+snap.date.replace(/[\s,]+/g,"_")+".docx";
+    a.download=title.replace(/\s+/g,"_")+"_"+snap.date.replace(/[\s,]+/g,"_")+".docx";
     a.click();
   });
 };
 
-// 9. HOOK go() FOR HISTORY
+// 11. HOOK go() FOR HISTORY
 var _origGo=go;
 go=function(id){
   if(id==="hist"&&!document.getElementById("s-hist"))mkSections();
