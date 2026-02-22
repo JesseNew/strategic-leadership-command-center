@@ -366,4 +366,207 @@ document.getElementById('mb').addEventListener('click',()=>document.getElementBy
 mkSections()});
 </script>
 </body>
+
+<!-- PASTE THIS RIGHT BEFORE THE CLOSING </html> TAG IN YOUR EXISTING FILE -->
+<script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+<style>
+.hist-item{padding:12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.hist-item:hover{background:var(--sf2);border-color:var(--ac)}
+.hist-date{font-weight:600;color:var(--ac);font-size:13px;margin-bottom:4px}
+.hist-preview{font-size:12px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-list{max-height:500px;overflow-y:auto}
+</style>
+<template id="T_hist">
+<div class="cd">
+<h2>📅 History & Saved Entries</h2>
+<p style="color:var(--tx2);margin:8px 0 16px">Your saved daily reflections, coaching observations, and A3 reports.</p>
+<div class="eb" style="margin-bottom:20px">
+<button class="btn bp" onclick="saveSnapshot('daily')">💾 Save Today's Reflections</button>
+<button class="btn bp" onclick="saveSnapshot('a3')" style="background:var(--ac2)">💾 Save A3</button>
+<button class="btn bp" onclick="saveSnapshot('eval')" style="background:var(--gn)">💾 Save Coaching Eval</button>
+</div>
+<div id="histList"></div>
+</div>
+<div class="cd">
+<h2>🗑&#xFE0F; Manage History</h2>
+<button class="btn" style="background:var(--rd);color:#fff" onclick="if(confirm('Delete ALL history?')){localStorage.removeItem('ves_history');renderHistList()}">Clear All History</button>
+</div>
+</template>
+<script>
+// === ADD HISTORY TO SIDEBAR ===
+(function(){
+  Z.hr.s.push({id:"hist",ic:"\u{1F4C5}",l:"History"});
+  if(cZ==="hr") rS();
+})();
+
+// === ENHANCED DOCX EXPORT ===
+var _origXD = xD;
+xD = function(title) {
+  if (typeof docx === 'undefined') { _origXD(title); return; }
+  var mc = document.getElementById("MC");
+  var content = [];
+  var els = mc.querySelectorAll("h2, h3, p, li, textarea, .ib, .pl, .qi, .fs");
+  els.forEach(function(el) {
+    if (el.tagName === "TEXTAREA") {
+      var text = el.value || "";
+      if (text.trim()) content.push({type:"answer", text: text});
+    } else if (el.tagName === "H2") {
+      content.push({type:"h1", text: el.textContent.trim()});
+    } else if (el.tagName === "H3") {
+      content.push({type:"h2", text: el.textContent.trim()});
+    } else if (el.tagName === "LI") {
+      content.push({type:"bullet", text: el.textContent.trim()});
+    } else {
+      var t = el.textContent.trim();
+      if (t.length > 2) content.push({type:"para", text: t});
+    }
+  });
+  var D = docx;
+  var children = [
+    new D.Paragraph({children:[new D.TextRun({text:title,bold:true,size:48,font:"Calibri"})],spacing:{after:200}}),
+    new D.Paragraph({children:[new D.TextRun({text:"Generated: "+new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),italics:true,size:20,color:"666666",font:"Calibri"})],spacing:{after:400}})
+  ];
+  content.forEach(function(item) {
+    if (item.type==="h1") {
+      children.push(new D.Paragraph({children:[new D.TextRun({text:item.text,bold:true,size:36,font:"Calibri",color:"2c3e50"})],spacing:{before:300,after:150}}));
+    } else if (item.type==="h2") {
+      children.push(new D.Paragraph({children:[new D.TextRun({text:item.text,bold:true,size:28,font:"Calibri",color:"4f8cff"})],spacing:{before:200,after:100}}));
+    } else if (item.type==="bullet") {
+      children.push(new D.Paragraph({children:[new D.TextRun({text:item.text,size:22,font:"Calibri"})],bullet:{level:0},spacing:{after:60}}));
+    } else if (item.type==="answer") {
+      children.push(new D.Paragraph({children:[new D.TextRun({text:item.text,size:22,font:"Calibri"})],spacing:{after:100},indent:{left:360}}));
+    } else {
+      children.push(new D.Paragraph({children:[new D.TextRun({text:item.text,size:22,font:"Calibri"})],spacing:{after:80}}));
+    }
+  });
+  var doc = new D.Document({sections:[{properties:{},children:children}]});
+  D.Packer.toBlob(doc).then(function(blob) {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = title.replace(/\s+/g,"_") + ".docx";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+};
+
+// === SNAPSHOT / HISTORY SYSTEM ===
+function saveSnapshot(type) {
+  var mc = document.getElementById("MC");
+  var timestamp = new Date().toISOString();
+  var date = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  var time = new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
+  var fields = {};
+  mc.querySelectorAll("textarea").forEach(function(ta) {
+    if (ta.value.trim()) {
+      var label = "";
+      var prev = ta.previousElementSibling;
+      if (prev && prev.tagName === "LABEL") label = prev.textContent.trim();
+      else { var fs = ta.closest(".fs"); if(fs){var lb=fs.querySelector("label");if(lb)label=lb.textContent.trim();} }
+      fields[label || ("Field "+Object.keys(fields).length)] = ta.value.trim();
+    }
+  });
+  var ratings = {};
+  mc.querySelectorAll(".rb.sel").forEach(function(btn) {
+    var g = btn.dataset.g, lv = btn.dataset.lv;
+    if (g && lv) ratings[g] = lv;
+  });
+  var snapshot = {timestamp:timestamp,date:date,time:time,type:type,
+    typeName: type==="daily"?"Daily Reflection":type==="a3"?"A3 Report":type==="eval"?"Coaching Observation":type,
+    fields:fields,ratings:ratings,fieldCount:Object.keys(fields).length};
+  var history = JSON.parse(localStorage.getItem("ves_history") || "[]");
+  history.unshift(snapshot);
+  if (history.length > 200) history.splice(200);
+  localStorage.setItem("ves_history", JSON.stringify(history));
+  alert("Saved! ("+snapshot.fieldCount+" fields captured)\n\nView in History tab under HR / Work.");
+  if (cS === "hist") renderHistList();
+}
+
+function renderHistList() {
+  var el = document.getElementById("histList");
+  if (!el) return;
+  var history = JSON.parse(localStorage.getItem("ves_history") || "[]");
+  if (history.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3)"><p style="font-size:24px;margin-bottom:12px">No entries yet</p><p>Fill out any section, then come here and click Save.</p></div>';
+    return;
+  }
+  var h = '<div class="hist-list">';
+  var icons = {daily:"\u2600\uFE0F",a3:"\uD83D\uDCC4",eval:"\uD83D\uDCCB"};
+  history.forEach(function(snap, idx) {
+    var icon = icons[snap.type] || "\uD83D\uDCDD";
+    var preview = "";
+    var keys = Object.keys(snap.fields);
+    if (keys.length > 0) preview = snap.fields[keys[0]].substring(0, 100);
+    h += '<div class="hist-item" onclick="viewSnapshot('+idx+')">';
+    h += '<div class="hist-date">'+icon+' '+snap.typeName+' \u2014 '+snap.date+' at '+snap.time+'</div>';
+    h += '<div class="hist-preview">'+(preview || "["+snap.fieldCount+" fields]")+'</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function viewSnapshot(idx) {
+  var history = JSON.parse(localStorage.getItem("ves_history") || "[]");
+  var snap = history[idx];
+  if (!snap) return;
+  var mc = document.getElementById("MC");
+  var h = '<div class="cd">';
+  h += '<button class="btn" style="margin-bottom:16px;background:var(--sf2);color:var(--tx)" onclick="ss(\'hist\')"> Back to History</button>';
+  h += '<h2>'+snap.typeName+'</h2>';
+  h += '<p style="color:var(--tx2);margin-bottom:16px">'+snap.date+' at '+snap.time+'</p>';
+  Object.keys(snap.fields).forEach(function(key) {
+    h += '<div class="fs"><label>'+key+'</label>';
+    h += '<div style="padding:8px 0;color:var(--tx);white-space:pre-wrap;font-size:13px">'+snap.fields[key]+'</div></div>';
+  });
+  if (snap.ratings && Object.keys(snap.ratings).length > 0) {
+    h += '<h3>Ratings</h3>';
+    Object.keys(snap.ratings).forEach(function(key) {
+      var color = snap.ratings[key]==="Green"?"var(--gn)":snap.ratings[key]==="Yellow"?"var(--yl)":snap.ratings[key]==="Orange"?"var(--og)":"var(--rd)";
+      h += '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="width:10px;height:10px;border-radius:50%;background:'+color+';display:inline-block"></span><span style="font-size:13px;color:var(--tx2)">'+key+': <strong style="color:'+color+'">'+snap.ratings[key]+'</strong></span></div>';
+    });
+  }
+  h += '<div class="eb">';
+  h += '<button class="btn" style="background:var(--rd);color:#fff" onclick="deleteSnapshot('+idx+')">Delete This Entry</button>';
+  h += '<button class="btn bp" onclick="exportSnapshotDocx('+idx+')">Export to DOCX</button>';
+  h += '</div></div>';
+  mc.innerHTML = h;
+}
+
+function deleteSnapshot(idx) {
+  if (!confirm("Delete this entry?")) return;
+  var history = JSON.parse(localStorage.getItem("ves_history") || "[]");
+  history.splice(idx, 1);
+  localStorage.setItem("ves_history", JSON.stringify(history));
+  ss("hist");
+}
+
+function exportSnapshotDocx(idx) {
+  var history = JSON.parse(localStorage.getItem("ves_history") || "[]");
+  var snap = history[idx];
+  if (!snap) return;
+  if (typeof docx === "undefined") { alert("DOCX library loading... try again in a moment."); return; }
+  var D = docx;
+  var children = [
+    new D.Paragraph({children:[new D.TextRun({text:snap.typeName,bold:true,size:48,font:"Calibri"})],spacing:{after:100}}),
+    new D.Paragraph({children:[new D.TextRun({text:snap.date+" at "+snap.time,italics:true,size:22,color:"666666",font:"Calibri"})],spacing:{after:400}})
+  ];
+  Object.keys(snap.fields).forEach(function(key) {
+    children.push(new D.Paragraph({children:[new D.TextRun({text:key,bold:true,size:24,font:"Calibri"})],spacing:{before:200,after:60}}));
+    children.push(new D.Paragraph({children:[new D.TextRun({text:snap.fields[key],size:22,font:"Calibri"})],spacing:{after:120}}));
+  });
+  var doc = new D.Document({sections:[{properties:{},children:children}]});
+  D.Packer.toBlob(doc).then(function(blob) {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = snap.typeName.replace(/\s+/g,"_")+"_"+snap.date.replace(/[\s,]+/g,"_")+".docx";
+    a.click();
+  });
+}
+
+// Hook into section rendering to populate history
+var _origSS = ss;
+ss = function(id) { _origSS(id); if(id==="hist") setTimeout(renderHistList, 50); };
+</script>
+
+  
 </html>
