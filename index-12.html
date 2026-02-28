@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Strategic Leadership Command Center</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--bg:#0f1117;--cd:#1a1d27;--sd:#141620;--ac:#6c63ff;--al:#8b83ff;--ag:rgba(108,99,255,.15);--t1:#e8e6f0;--t2:#9a97b0;--t3:#5e5c6e;--bd:#2a2d3a;--ok:#2ecc71;--wn:#f1c40f;--er:#e74c3c;--or:#e67e22;--in:#3498db}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1);display:flex;min-height:100vh}
+#sb{width:260px;background:var(--sd);border-right:1px solid var(--bd);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;transition:transform .3s}
+#sb::-webkit-scrollbar{width:4px}#sb::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+.sh{padding:24px 20px 16px;border-bottom:1px solid var(--bd)}.sh h2{color:var(--ac);font-size:1.4rem;letter-spacing:2px}
+.ss{color:var(--t3);font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+#nl{list-style:none;padding:8px 0}
+.ng{padding:18px 20px 6px;font-size:.65rem;letter-spacing:2px;color:var(--t3);text-transform:uppercase;font-weight:600}
+.ni{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;color:var(--t2);font-size:.85rem;transition:all .2s;border-left:3px solid transparent}
+.ni:hover{background:var(--ag);color:var(--t1)}.ni.on{background:var(--ag);color:var(--al);border-left-color:var(--ac);font-weight:600}
+.ni i{width:20px;text-align:center;font-size:.9rem}
+#mn{margin-left:260px;flex:1;min-height:100vh}
+#tb{height:60px;background:var(--sd);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50}
+#mb{display:none;background:none;border:none;color:var(--t1);font-size:1.2rem;cursor:pointer}
+#tr{display:flex;align-items:center;gap:16px;font-size:.85rem;color:var(--t2)}#gr{color:var(--al);font-weight:600}
+#ct{padding:32px;max-width:1200px}
+.sc{display:none;animation:fi .3s ease}.sc.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hd{margin-bottom:28px}.hd h1{font-size:1.8rem;font-weight:700;margin-bottom:6px}.hd p{color:var(--t2);font-size:.9rem;line-height:1.6}
+.cd{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:24px;margin-bottom:20px;transition:border-color .2s}
+.cd:hover{border-color:var(--ac)}.cd h3{font-size:1.05rem;margin-bottom:12px;color:var(--al)}
+.cd h4{font-size:.9rem;color:var(--t1);margin:12px 0 6px}.cd p,.cd li{color:var(--t2);font-size:.85rem;line-height:1.7}
+.cd ul{padding-left:18px}.cd ul li{margin-bottom:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.st{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s}
+.st:hover{border-color:var(--ac);transform:translateY(-2px)}.st .si{font-size:1.8rem;color:var(--ac);margin-bottom:8px}
+.st .sl{font-size:.75rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.ah{background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.95rem;transition:all .2s;margin-bottom:2px}
+.ah:hover{border-color:var(--ac)}.ah.op{border-color:var(--ac);border-radius:8px 8px 0 0;background:rgba(108,99,255,.08)}
+.ah .bg{background:var(--ac);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:10px;margin-left:auto;margin-right:12px}
+.ab{display:none;background:var(--cd);border:1px solid var(--bd);border-top:none;border-radius:0 0 8px 8px;padding:20px;margin-bottom:12px}
+.ab.op{display:block}
+textarea,input[type="text"]{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:12px;color:var(--t1);font-family:inherit;font-size:.85rem;resize:vertical;margin-top:6px}
+textarea:focus,input[type="text"]:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 2px var(--ag)}
+label{display:block;font-size:.8rem;color:var(--t2);margin-bottom:4px;font-weight:500}.fg{margin-bottom:16px}
+.bt{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;background:var(--ac);color:#fff}
+.bt:hover{background:var(--al)}
+.rg{display:flex;gap:8px;margin:8px 0}
+.rc{width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700}
+.rc.red{border-color:var(--er)}.rc.red.sel{background:var(--er);color:#fff}
+.rc.org{border-color:var(--or)}.rc.org.sel{background:var(--or);color:#fff}
+.rc.yel{border-color:var(--wn)}.rc.yel.sel{background:var(--wn);color:#333}
+.rc.grn{border-color:var(--ok)}.rc.grn.sel{background:var(--ok);color:#fff}
+input[type="range"]{-webkit-appearance:none;width:100%;height:6px;background:var(--bd);border-radius:3px;outline:none;margin:8px 0}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--ac);border-radius:50%;cursor:pointer}
+.rv{display:inline-block;background:var(--ac);color:#fff;padding:2px 10px;border-radius:12px;font-size:.8rem;font-weight:700;min-width:36px;text-align:center}
+.pc{background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(108,99,255,.02));border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:20px;margin-bottom:16px}
+.pc .pq{color:var(--al);font-weight:600;font-size:.9rem;margin-bottom:8px}.pc .ph{color:var(--t3);font-size:.8rem;font-style:italic;margin-bottom:10px}
+.pb{display:inline-block;padding:4px 12px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.pf{background:rgba(46,204,113,.15);color:var(--ok)}.pd{background:rgba(52,152,219,.15);color:var(--in)}
+.pe{background:rgba(241,196,15,.15);color:var(--wn)}.pi{background:rgba(231,76,60,.15);color:var(--er)}
+.qb{border-left:3px solid var(--ac);padding:12px 20px;margin:16px 0;background:rgba(108,99,255,.05);border-radius:0 8px 8px 0}
+.qb p{color:var(--t2);font-style:italic;font-size:.85rem}.qb .qa{color:var(--t3);font-size:.75rem;margin-top:6px;font-style:normal}
+.cc{background:linear-gradient(135deg,rgba(231,76,60,.08),rgba(241,196,15,.05));border:1px solid rgba(231,76,60,.25);border-radius:12px;padding:20px;margin-bottom:16px}.cc h4{color:var(--er)}
+.ec{background:linear-gradient(135deg,rgba(46,204,113,.08),rgba(52,152,219,.05));border:1px solid rgba(46,204,113,.25);border-radius:12px;padding:20px;margin-bottom:16px}.ec h4{color:var(--ok)}
+.to{position:fixed;bottom:24px;right:24px;background:var(--ok);color:#fff;padding:12px 24px;border-radius:8px;font-weight:600;font-size:.85rem;z-index:200;animation:ti .3s ease,tf .3s ease 1.7s forwards}
+@keyframes ti{from{opacity:0;transform:translateY(20px)}}@keyframes tf{to{opacity:0;transform:translateY(20px)}}
+@media(max-width:900px){#sb{transform:translateX(-100%)}#sb.open{transform:translateX(0)}#mn{margin-left:0}#mb{display:block}.g2,.g3{grid-template-columns:1fr}#ct{padding:20px}}
+</style>
+</head>
+<body>
+<nav id="sb">
+<div class="sh"><h2><i class="fas fa-compass"></i> SLCC</h2><p class="ss">Strategic Leadership<br>Command Center</p></div>
+<ul id="nl">
+<li class="ni on" data-s="dash"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+<li class="ng">COACHING</li>
+<li class="ni" data-s="icf"><i class="fas fa-award"></i><span>ICF Competencies</span></li>
+<li class="ni" data-s="eth"><i class="fas fa-balance-scale"></i><span>ICF Ethics</span></li>
+<li class="ni" data-s="obs"><i class="fas fa-clipboard-check"></i><span>Observed Feedback</span></li>
+<li class="ng">VESPERTIDE</li>
+<li class="ni" data-s="vf"><i class="fas fa-mountain-sun"></i><span>The Framework</span></li>
+<li class="ni" data-s="vp"><i class="fas fa-columns"></i><span>10 Pillars</span></li>
+<li class="ni" data-s="va"><i class="fas fa-chart-bar"></i><span>Self-Assessment</span></li>
+<li class="ng">HR / WORK</li>
+<li class="ni" data-s="fw"><i class="fas fa-circle-notch"></i><span>Flywheel Builder</span></li>
+<li class="ni" data-s="a3"><i class="fas fa-file-lines"></i><span>A3 Problem Solving</span></li>
+<li class="ni" data-s="ceo"><i class="fas fa-user-tie"></i><span>CEO Prep</span></li>
+<li class="ni" data-s="bl"><i class="fas fa-briefcase"></i><span>Business Leader Prep</span></li>
+<li class="ng">SELF-DEVELOPMENT</li>
+<li class="ni" data-s="str"><i class="fas fa-brain"></i><span>Strategic Thinking</span></li>
+</ul>
+</nav>
+<main id="mn">
+<header id="tb"><button id="mb"><i class="fas fa-bars"></i></button><div id="tr"><span id="dt"></span><span id="gr"></span></div></header>
+<div id="ct"></div>
+</main>
+<script>
+const D=JSON.parse(localStorage.getItem('slcc')||'{}');
+function sv(){localStorage.setItem('slcc',JSON.stringify(D));const t=document.createElement('div');t.className='to';t.textContent='Saved!';document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+function g(k){return D[k]||''}
+function s(k,v){D[k]=v}
+function ta(k,p,r){return '<textarea rows="'+(r||3)+'" placeholder="'+p+'" onchange="s(\''+k+'\',this.value);sv()">'+g(k)+'</textarea>'}
+function sl(k){const v=g(k)||5;return '<div style="display:flex;align-items:center;gap:12px"><input type="range" min="1" max="10" value="'+v+'" oninput="this.nextElementSibling.textContent=this.value;s(\''+k+'\',this.value);sv()"><span class="rv">'+v+'</span></div>'}
+function ac(t,c,b){const id='a'+Math.random().toString(36).substr(2,7);const bg=b?'<span class="bg">'+b+'</span>':'';return '<div class="ah" onclick="const b=document.getElementById(\''+id+'\');b.classList.toggle(\'op\');this.classList.toggle(\'op\')"><span>'+t+'</span>'+bg+'<i class="fas fa-chevron-down"></i></div><div class="ab" id="'+id+'">'+c+'</div>'}
+function rb(k){const c=g(k);return['red','org','yel','grn'].map((cl,i)=>{const lb=['R','O','Y','G'][i];return '<div class="rc '+cl+(c===cl?' sel':'')+'" onclick="s(\''+k+'\',\''+cl+'\');this.parentNode.querySelectorAll(\'.rc\').forEach(e=>e.classList.remove(\'sel\'));this.classList.add(\'sel\');sv()">'+lb+'</div>'}).join('')}
+
+function mkSections(){
+const E=document.getElementById('ct');
+let h='';
+
+// ===== DASHBOARD =====
+h+=`<div class="sc on" id="s-dash"><div class="hd"><h1>\u{1F9ED} Strategic Leadership Command Center</h1><p>Your daily operating system for becoming a more strategic, intentional leader.</p></div>
+<div class="g3">
+<div class="st" onclick="go('str')"><div class="si"><i class="fas fa-brain"></i></div><div class="sl">Today's Focus</div><div style="color:var(--al);font-size:.85rem;margin-top:6px">Strategic Thinking</div></div>
+<div class="st" onclick="go('va')"><div class="si"><i class="fas fa-chart-line"></i></div><div class="sl">Assessment</div><div style="color:var(--al);font-size:.85rem;margin-top:6px">Track Growth</div></div>
+<div class="st" onclick="go('fw')"><div class="si"><i class="fas fa-circle-notch"></i></div><div class="sl">Flywheel</div><div style="color:var(--al);font-size:.85rem;margin-top:6px">Build Momentum</div></div></div>
+<div class="cd" style="margin-top:24px"><h3><i class="fas fa-sun"></i> Daily Strategic Check-In</h3>
+<div class="pc"><div class="pq">\u{1F3AF} What ONE thing today would create the most leverage?</div>${ta('d1','Not a task\u2014what moves the needle?',2)}</div>
+<div class="pc"><div class="pq">\u{1F50D} What pattern or trend needs my attention?</div>${ta('d2','Step back\u2014what is the bigger picture?',2)}</div>
+<div class="pc"><div class="pq">\u26A1 What am I doing that only I can do? What should I delegate?</div>${ta('d3','$20/hr work vs $2000/hr work...',2)}</div></div>
+<div class="cd"><h3><i class="fas fa-moon"></i> Evening Vespertide Reflection</h3>
+<div class="pc"><div class="pq">Reflect: What did I learn today?</div>${ta('e1','Reflect honestly...',2)}</div>
+<div class="pc"><div class="pq">Recalibrate: Are we pointed toward our vision?</div>${ta('e2','Where are we drifting?',2)}</div>
+<div class="pc"><div class="pq">Renew: What do we change tomorrow?</div>${ta('e3','What will I do differently?',2)}</div></div></div>`;
+
+// ===== ICF COMPETENCIES =====
+const icf=[
+{n:1,d:'Foundation',t:'Demonstrates Ethical Practice',df:'Understands and consistently applies coaching ethics and standards.',b:['Demonstrates personal integrity and honesty','Is sensitive to clients\' identity, environment, values, and beliefs','Uses appropriate and respectful language','Abides by the ICF Code of Ethics','Maintains confidentiality per agreements and laws','Maintains distinctions between coaching, consulting, psychotherapy','Refers clients to other professionals when appropriate']},
+{n:2,d:'Foundation',t:'Embodies a Coaching Mindset',df:'Develops a mindset that is open, curious, flexible, and client-centered.',b:['Acknowledges clients are responsible for their own choices','Engages in ongoing learning and development','Maintains an ongoing reflective practice','Aware of influence of context and culture','Uses self-awareness and intuition to benefit clients','Regulates emotions to stay present','Mentally and emotionally prepares for sessions','Seeks help from outside sources when necessary']},
+{n:3,d:'Co-Creating',t:'Establishes and Maintains Agreements',df:'Partners with client and stakeholders to create clear agreements.',b:['Explains what coaching is and is not','Reaches agreement about relationship boundaries','Clarifies logistics, fees, scheduling, confidentiality','Partners to establish overall plan and goals','Aligns on session outcome and measures of success','Manages time and focus per client agenda','Honors right to end the relationship']},
+{n:4,d:'Co-Creating',t:'Cultivates Trust and Safety',df:'Creates a safe, supportive environment for the client.',b:['Seeks to understand client within their context','Demonstrates respect for client\'s identity and style','Acknowledges client\'s talents and insights','Shows support, empathy, and concern','Supports expression of feelings and beliefs','Demonstrates openness and vulnerability to build trust']},
+{n:5,d:'Communicating',t:'Maintains Presence',df:'Is fully conscious and present with the client.',b:['Remains focused, observant, empathetic, responsive','Demonstrates curiosity','Manages emotions to stay present','Comfortable with strong client emotions','Comfortable not knowing','Allows space for silence and reflection']},
+{n:6,d:'Communicating',t:'Listens Actively',df:'Focuses on what the client is and is not saying.',b:['Considers client\'s context and identity','Reflects or summarizes for clarity','Notices when there is more behind what\'s said','Explores emotions, energy shifts, non-verbal cues','Integrates words, tone, and body language','Notices trends across sessions']},
+{n:7,d:'Learning & Growth',t:'Evokes Awareness',df:'Facilitates client insight and learning.',b:['Considers client experience when choosing interventions','Challenges client to evoke awareness','Asks questions about thinking, values, needs, beliefs','Helps explore beyond current thinking','Invites in-the-moment sharing','Notices what is working','Adjusts approach based on needs','Helps identify factors shaping patterns','Invites ideas about moving forward','Supports reframing perspectives','Shares observations without attachment']},
+{n:8,d:'Learning & Growth',t:'Facilitates Client Growth',df:'Partners to transform learning into action and autonomy.',b:['Helps integrate new awareness into worldview','Co-creates goals, actions, accountability','Honors client autonomy in designing actions','Identifies potential results from actions','Explores resources and barriers','Summarizes learning within and between sessions','Celebrates progress and successes','Partners to close session intentionally']}
+];
+h+=`<div class="sc" id="s-icf"><div class="hd"><h1><i class="fas fa-award"></i> ICF Core Competencies</h1><p>The 8 core competencies across 4 domains that define professional coaching excellence.</p></div>
+<div class="g2" style="margin-bottom:24px">
+<div class="cd" style="border-left:3px solid var(--ok)"><h4 style="color:var(--ok)">A. Foundation</h4><p>Competencies 1-2</p></div>
+<div class="cd" style="border-left:3px solid var(--in)"><h4 style="color:var(--in)">B. Co-Creating Relationship</h4><p>Competencies 3-4</p></div>
+<div class="cd" style="border-left:3px solid var(--wn)"><h4 style="color:var(--wn)">C. Communicating Effectively</h4><p>Competencies 5-6</p></div>
+<div class="cd" style="border-left:3px solid var(--ac)"><h4 style="color:var(--ac)">D. Cultivating Learning & Growth</h4><p>Competencies 7-8</p></div></div>`;
+icf.forEach(x=>{const bl=x.b.map(b=>'<li>'+b+'</li>').join('');h+=ac('<span style="color:var(--t3);margin-right:8px">'+x.n+'.</span> '+x.t,'<p style="margin-bottom:12px"><strong>Definition:</strong> '+x.df+'</p><h4>Key Behaviors:</h4><ul>'+bl+'</ul><div class="fg" style="margin-top:16px"><label>My Notes & Reflections:</label>'+ta('ic'+x.n,'How am I demonstrating this? Where can I grow?',3)+'</div>',x.d)});
+h+='</div>';
+
+// ===== ICF ETHICS =====
+h+=`<div class="sc" id="s-eth"><div class="hd"><h1><i class="fas fa-balance-scale"></i> ICF Code of Ethics</h1><p>The ethical standards governing professional coaching.</p></div>
+<div class="cd"><h3>ICF Core Values</h3><ul>
+<li><strong>Integrity</strong> \u2014 Highest standards of honesty and ethical behavior</li>
+<li><strong>Excellence</strong> \u2014 Highest professional standards and competencies</li>
+<li><strong>Collaboration</strong> \u2014 Cooperative partnerships for shared goals</li>
+<li><strong>Respect</strong> \u2014 Regard for the worth and dignity of every person</li></ul></div>
+${ac('Section 1: Responsibility to Clients','<ul><li>Explain nature/value of coaching, confidentiality limits, financial terms</li><li>Create agreement about roles, responsibilities, rights</li><li>Maintain strict confidentiality</li><li>Clarify information exchange between coach, client, sponsor</li><li>Clarify when confidentiality won\'t be maintained (illegal activity, danger)</li><li>Be alert to shifts in value received from coaching</li><li>Respect right to terminate</li></ul>','Core')}
+${ac('Section 2: Practice & Performance','<ul><li>Adhere to ICF Code in all activities</li><li>Accurately identify qualifications and credentials</li><li>Recognize personal limitations</li><li>Resolve conflicts of interest</li><li>Maintain records promoting confidentiality and security</li></ul>','Practice')}
+${ac('Section 3: Professionalism','<ul><li>Avoid discrimination, maintain fairness</li><li>Make truthful statements about offerings</li><li>Accurately state qualifications and scope</li><li>Honor contributions of others</li><li>Conduct research with honesty and rigor</li></ul>','Profession')}
+${ac('Section 4: Society','<ul><li>Maintain fairness while respecting cultural practices</li><li>Create a more just, equitable, inclusive world</li><li>Use methods that serve client well-being</li><li>Comply with applicable laws and regulations</li></ul>','Society')}
+<div class="cd" style="margin-top:24px"><h3><i class="fas fa-pen"></i> Ethics Self-Reflection</h3>
+<div class="pc"><div class="pq">Am I maintaining clear boundaries between coaching, consulting, mentoring, and therapy?</div>${ta('er1','Reflect on recent sessions...',3)}</div>
+<div class="pc"><div class="pq">Is there any situation where confidentiality is at risk?</div>${ta('er2','Think about your agreements...',3)}</div>
+<div class="pc"><div class="pq">Am I recognizing when a client needs a referral?</div>${ta('er3','Any clients who need therapy, consulting, etc.?',3)}</div></div></div>`;
+
+// ===== OBSERVED FEEDBACK =====
+function phase(n,t,desc,core,adv,fail,pfx){
+let ch=core.map((b,i)=>'<div style="display:flex;align-items:flex-start;gap:12px;margin:8px 0;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="flex:1;font-size:.85rem;color:var(--t2)">'+b+'</div><div class="rg">'+rb(pfx+'c'+i)+'</div></div>').join('');
+let ah2=adv.length?'<h4 style="color:var(--ac);margin-top:16px">Advanced:</h4>'+adv.map((b,i)=>'<div style="display:flex;align-items:flex-start;gap:12px;margin:8px 0;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="flex:1;font-size:.85rem;color:var(--t2)">'+b+'</div><div class="rg">'+rb(pfx+'a'+i)+'</div></div>').join(''):'';
+let fh=fail.map(f=>'<li style="color:var(--er);font-size:.85rem">'+f+'</li>').join('');
+return '<div class="cd"><h3>Phase '+n+': '+t+'</h3><p style="margin-bottom:16px">'+desc+'</p><div style="background:rgba(231,76,60,.08);border-radius:8px;padding:12px;margin-bottom:16px"><h4 style="color:var(--er);font-size:.8rem">\u26A0\uFE0F Will NOT pass if:</h4><ul>'+fh+'</ul></div><h4>Core Behaviors:</h4>'+ch+ah2+'<div class="g2" style="margin-top:16px"><div class="fg"><label>\u2705 What went well?</label>'+ta(pfx+'w','Strengths observed...',2)+'</div><div class="fg"><label>\u{1F527} Improve:</label>'+ta(pfx+'i','Areas to develop...',2)+'</div></div></div>'}
+
+h+=`<div class="sc" id="s-obs"><div class="hd"><h1><i class="fas fa-clipboard-check"></i> Observed Coaching Feedback</h1><p>Evaluate coaching sessions using the ICF-aligned rubric.</p></div>
+<div class="cd"><h3>Rating System</h3><div class="g2">
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="width:16px;height:16px;border-radius:50%;background:var(--ok);display:inline-block"></span><strong style="font-size:.85rem">Green</strong> \u2014 Successfully demonstrated</div>
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="width:16px;height:16px;border-radius:50%;background:var(--wn);display:inline-block"></span><strong style="font-size:.85rem">Yellow</strong> \u2014 Approached but incomplete</div>
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="width:16px;height:16px;border-radius:50%;background:var(--or);display:inline-block"></span><strong style="font-size:.85rem">Orange</strong> \u2014 May not understand core principles</div>
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="width:16px;height:16px;border-radius:50%;background:var(--er);display:inline-block"></span><strong style="font-size:.85rem">Red</strong> \u2014 Missed completely</div></div></div>
+<div class="cd"><h3>Session Details</h3><div class="g2">
+<div class="fg"><label>Coach:</label><input type="text" placeholder="Name" onchange="s('oc',this.value);sv()" value="${g('oc')}"></div>
+<div class="fg"><label>Observer:</label><input type="text" placeholder="Name" onchange="s('oo',this.value);sv()" value="${g('oo')}"></div></div></div>
+${phase(1,'Clarify the Agenda','Evaluate ability to establish session agreements and set focus.',['Asks questions that clarify what client wants from the session','Asks client to summarize the desired outcome'],['Explores client\'s values, priorities, broader goals','Explores measures of success'],['Coach chooses the topic for the client','Coach does not coach around client\'s chosen topic'],'o1')}
+${phase(2,'Explore Coachable Moment','Evaluate ability to listen actively and provoke insight.',['Listens to what client is and is not saying','Picks up on the words the client is using','Responds to emotions, mood, tone, non-verbal cues','Questions focused on inquiry vs. telling','Asks open-ended questions that evoke discovery'],['Inquires about current thinking/feeling about situation','Inquires about thinking/feeling about themselves','Explores how future possibility might feel','Explores what needs to be addressed to move forward'],['Leading client in coach\'s direction','Tells client what to do','Response unrelated to client\'s agenda'],'o2')}
+${phase(3,'Invite the Shift','Evaluate ability to cultivate learning and facilitate growth.',['Invites client to acknowledge new self-awareness','Invites client to contribute own observations','Invites client to acknowledge new ways of thinking','Invites client to recap new understanding'],[],['Coach chooses the topic','Coach ignores client\'s chosen topic'],'o3')}
+${phase(4,'Framing the Masterpiece','Evaluate ability to transform insights into action.',['Checks if client is ready to shift into action','Engages client in developing next steps','Prompts client to consider tools or resources','Partners on accountability method'],['Checks progress towards session outcome','Explores how learning applies elsewhere'],['Actions unrelated to client\'s agenda','Actions have no clear purpose','Tools imposed without discussion'],'o4')}
+<div class="cd"><h3><i class="fas fa-comment-dots"></i> Overall Notes</h3>
+<div class="fg"><label>The "Ah-Ha" moment:</label>${ta('oaha','Key insight...',3)}</div>
+<div class="fg"><label>Client commitment:</label>${ta('ocom','Action commitment...',3)}</div>
+<div class="fg"><label>Other comments:</label>${ta('oother','Additional observations...',3)}</div>
+<button class="bt" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+// ===== VESPERTIDE FRAMEWORK =====
+h+=`<div class="sc" id="s-vf"><div class="hd"><h1><i class="fas fa-mountain-sun"></i> The Vespertide Framework</h1><p>Ten Pillars of Enduring Leadership \u2014 Lead with clarity. Build what endures.</p></div>
+<div class="cd"><h3>The Vespertide Metaphor</h3>
+<div class="qb"><p><em>Vespertide</em> represents the reflective pause before renewal \u2014 the leader\'s daily practice of stepping back, assessing, recalibrating, and preparing for what comes next.</p></div>
+<p style="margin-top:12px">Each evening: <strong>Reflect</strong> (what did I learn?), <strong>Recalibrate</strong> (are we on track?), <strong>Renew</strong> (what changes tomorrow?).</p></div>
+<div class="cd"><h3>The Vespertide Cycle</h3><div class="g2">
+<div class="cd" style="border-left:3px solid var(--ok)"><span class="pb pf">Phase 1</span><h4 style="color:var(--ok)">Foundation \u2014 Who I Am</h4><p><strong>Pillars:</strong> Presence, Humility, Growth</p></div>
+<div class="cd" style="border-left:3px solid var(--in)"><span class="pb pd">Phase 2</span><h4 style="color:var(--in)">Direction \u2014 Where We\'re Going</h4><p><strong>Pillars:</strong> Vision, Focus</p></div>
+<div class="cd" style="border-left:3px solid var(--wn)"><span class="pb pe">Phase 3</span><h4 style="color:var(--wn)">Execution \u2014 How We Get There</h4><p><strong>Pillars:</strong> Clarity, Courage, Adaptability</p></div>
+<div class="cd" style="border-left:3px solid var(--er)"><span class="pb pi">Phase 4</span><h4 style="color:var(--er)">Impact \u2014 What We Create</h4><p><strong>Pillars:</strong> Connection, Momentum</p></div></div></div>
+<div class="cd"><h3>Source Foundations</h3><div class="g2">
+<div><h4>Patrick Lencioni</h4><ul><li>4 Obsessions of an Extraordinary Executive</li><li>5 Temptations of a CEO</li><li>The Ideal Team Player</li><li>5 Dysfunctions of a Team</li></ul></div>
+<div><h4>Jim Collins</h4><ul><li>Good to Great \u2014 Level 5, Hedgehog, Flywheel</li><li>Stockdale Paradox</li><li>First Who, Then What</li></ul></div>
+<div><h4>John Maxwell</h4><ul><li>21 Irrefutable Laws of Leadership</li><li>Law of the Lid, Navigation, Process</li><li>Law of Connection, Legacy</li></ul></div>
+<div><h4>Additional Sources</h4><ul><li>Dale Carnegie \u2014 How to Win Friends</li><li>Kim Scott \u2014 Radical Candor</li><li>Working Genius Framework</li></ul></div></div></div>
+<div class="cd"><h3><i class="fas fa-pen"></i> Framework Reflection</h3>
+<div class="pc"><div class="pq">Which phase do you gravitate toward? Which do you avoid?</div>${ta('vfr1','Foundation, Direction, Execution, or Impact...',3)}</div>
+<div class="pc"><div class="pq">Your leadership philosophy in one sentence:</div>${ta('vfr2','My leadership is about...',3)}</div></div></div>`;
+
+// ===== 10 PILLARS =====
+const pils=[
+{n:1,nm:'Vision',ph:'Direction',pc:'pd',sub:'Direction & Organizational Clarity',co:'Leaders define where the organization is going, why it matters, and ensure everyone understands.',bh:['Answer 6 clarifying questions: Why exist? Core values? What business? Goals? Who does what? How decide?','Repeat key messages 6+ times through multiple mediums','Align people systems to reinforce values','Make timely decisions rather than delay for perfection','Invite debate; false consensus kills clarity','Measure by org outcomes, not personal recognition'],q:'If I stopped 10 employees, could they articulate why we exist and where we\'re headed?'},
+{n:2,nm:'Presence',ph:'Foundation',pc:'pf',sub:'Authenticity & Attentiveness',co:'Leaders show up fully, creating psychological safety through genuine presence.',bh:['Share imperfections and admit when you don\'t know','Give undivided attention: devices away, eye contact','Respond without judgment, normalize mistakes','Read the room and sense energy shifts','Bring calm especially during stress'],q:'Am I fully here, and do people feel safe being themselves?'},
+{n:3,nm:'Humility',ph:'Foundation',pc:'pf',sub:'Service Over Status',co:'Leadership is about lifting others, not elevating yourself.',bh:['Give credit publicly; take blame privately','Ask more than tell; empower rather than control','Invest in developing others\' leadership','Frame decisions around the mission, not your image','Admit when you don\'t know and ask for help'],q:'Who gets the spotlight when things go well?'},
+{n:4,nm:'Growth',ph:'Foundation',pc:'pf',sub:'Self-Development & Learning',co:'Leaders commit to continuous learning and model growth mindset.',bh:['Actively seek feedback and act on it visibly','Read, learn, and share discoveries','Set personal dev goals and track publicly','Invest in coaching, courses, peer groups','Model curiosity: "What can I learn from this?"'],q:'When did you last change your mind or shift your approach?'},
+{n:5,nm:'Focus',ph:'Direction',pc:'pd',sub:'Time, Energy, & Priorities',co:'Leaders guard time and focus ruthlessly.',bh:['Block time for strategic work, not just firefighting','Say no to good to preserve space for great','Audit calendar monthly vs stated priorities','Delegate 80% tasks for 10x work','Design week around energy peaks'],q:'Would your calendar reflect your stated priorities?'},
+{n:6,nm:'Clarity',ph:'Execution',pc:'pe',sub:'Open-Mindedness & Truth-Seeking',co:'Leaders confront reality, invite dissent, seek understanding.',bh:['Invite and reward candid feedback','Surface brutal facts without blame','Listen to understand, not to win','Ask probing questions before offering solutions','Ensure decisions are clear with buy-in'],q:'Do hard truths surface early, or late when damage is done?'},
+{n:7,nm:'Courage',ph:'Execution',pc:'pe',sub:'Challenge & Accountability',co:'Leaders speak hard truths, hold high standards, address problems directly.',bh:['Give timely, specific feedback within 48 hours','Address performance gaps directly and promptly','Hold yourself and others accountable','Have the hard conversation today, not next quarter','Be willing to exit misaligned high performers'],q:'Do performance gaps get addressed promptly?'},
+{n:8,nm:'Adaptability',ph:'Execution',pc:'pe',sub:'Change Leadership & Resilience',co:'Leaders navigate change with composure and build resilient systems.',bh:['Communicate the "why" behind change clearly and repeatedly','Acknowledge losses and concerns','Create small wins early to build confidence','Model calm during uncertainty','Celebrate learning from failures'],q:'Are you a stabilizing force during turbulence?'},
+{n:9,nm:'Connection',ph:'Impact',pc:'pi',sub:'People-Centeredness',co:'Leaders build enduring relationships and deeply understand people.',bh:['Know people\'s stories: family, goals, passions, fears','Frame requests in others\' interests','Protect dignity, let people save face','Adapt communication to each person','Recognize contributions frequently and specifically'],q:'Do people feel genuinely known, valued, and inspired?'},
+{n:10,nm:'Momentum',ph:'Impact',pc:'pi',sub:'Results & Legacy',co:'Leaders build cumulative progress toward outcomes that outlast them.',bh:['Focus on team results, not individual heroics','Celebrate small wins to build energy','Develop leaders, not just followers','Ask "What will endure after I\'m gone?"','Track leading indicators, not just lagging results','Remove obstacles; build sustainable systems'],q:'Are we building momentum or spinning wheels?'}
+];
+h+=`<div class="sc" id="s-vp"><div class="hd"><h1><i class="fas fa-columns"></i> The 10 Pillars</h1><p>Each pillar includes core ideas, teachable behaviors, and an assessment question.</p></div>`;
+pils.forEach(x=>{const bh=x.bh.map(b=>'<li>'+b+'</li>').join('');h+=ac('<span style="color:var(--t3);margin-right:8px">'+x.n+'.</span> '+x.nm+' <span style="font-size:.75rem;color:var(--t3);margin-left:8px">'+x.sub+'</span>','<span class="pb '+x.pc+'">'+x.ph+'</span><p style="margin:12px 0"><strong>Core Idea:</strong> '+x.co+'</p><h4>Teachable Behaviors:</h4><ul>'+bh+'</ul><div class="pc" style="margin-top:16px"><div class="pq">\u{1F3AF} "'+x.q+'"</div>'+ta('vp'+x.n,'Reflect honestly...',3)+'</div>',x.ph)});
+h+=`<div class="cd" style="margin-top:24px"><h3>Case Studies</h3>
+${ac('Case 1: Vision vs. Connection','<p><strong>Scenario:</strong> You\'re reorganizing for strategic alignment but it disrupts two high-performers.</p><div class="pc"><div class="pq">How honor Vision while practicing Connection?</div>'+ta('cs1','Think through the tension...',3)+'</div>')}
+${ac('Case 2: Courage vs. Adaptability','<p><strong>Scenario:</strong> Top performer misses deadlines and deflects accountability, but a critical launch is imminent.</p><div class="pc"><div class="pq">How balance Courage with Adaptability?</div>'+ta('cs2','Work through the tradeoff...',3)+'</div>')}
+${ac('Case 3: Clarity vs. Focus','<p><strong>Scenario:</strong> Team surfaced a strategic issue needing weeks of analysis, but you\'re overcommitted.</p><div class="pc"><div class="pq">How practice Clarity while honoring Focus?</div>'+ta('cs3','Navigate the tradeoff...',3)+'</div>')}</div></div>`;
+
+// ===== SELF-ASSESSMENT =====
+const asmt=[
+{nm:'Vision',qs:['Team can articulate why we exist and where we\'re headed','I communicate priorities 6+ times through multiple channels','Hiring, reviews, promotions align with values','I make timely decisions rather than waiting for perfection','I measure by org outcomes, not personal recognition']},
+{nm:'Presence',qs:['People are comfortable being vulnerable around me','I notice energy shifts and unspoken dynamics','I give full attention during 1:1s','I share my own mistakes to normalize growth','People describe me as grounded during stress']},
+{nm:'Humility',qs:['I celebrate others\' wins without my name attached','I ask for help rather than pretending','I invest time developing others\' leadership','In decisions I ask what\'s best for the mission','I give credit publicly and take blame privately']},
+{nm:'Growth',qs:['I actively seek and act on feedback','In the last 90 days I changed my mind','I have dev goals I review monthly','I share what I\'m learning with my team','When I make mistakes I ask what I can learn']},
+{nm:'Focus',qs:['My calendar reflects stated priorities','I say no to good to preserve great','I delegate 80% tasks','I design my week around energy peaks','I audit time monthly']},
+{nm:'Clarity',qs:['I invite and reward candid feedback','I listen to understand before defending','Hard truths surface early in my team','I probe for root causes before deciding','Decisions are clear with buy-in']},
+{nm:'Courage',qs:['I give timely specific feedback within 48 hours','I address performance gaps directly','I hold myself and others accountable','I\'ve had a difficult conversation in past 30 days','I will exit misaligned high performers if needed']},
+{nm:'Adaptability',qs:['I explain the why behind change and repeat it','I acknowledge what people are losing','I create early wins during change','People see me as calm during uncertainty','I celebrate learning from failures']},
+{nm:'Connection',qs:['I know team members\' stories beyond work','I frame requests in what others care about','I protect dignity and let people save face','I adapt communication to each person','People feel genuinely known and valued']},
+{nm:'Momentum',qs:['I focus on collective results, not heroics','I celebrate small wins frequently','I\'m developing leaders not followers','I ask what will endure after I\'m gone','I remove obstacles rather than push harder']}
+];
+h+=`<div class="sc" id="s-va"><div class="hd"><h1><i class="fas fa-chart-bar"></i> Self-Assessment</h1><p>Rate 1\u201310. 1=Never | 5=Sometimes | 10=Always</p></div>`;
+asmt.forEach((p,pi)=>{let qh='';p.qs.forEach((q,qi)=>{qh+='<div class="fg"><label>'+(qi+1)+'. '+q+'</label>'+sl('va'+pi+''+qi)+'</div>'});qh+='<div style="text-align:right;padding-top:8px;border-top:1px solid var(--bd)"><strong style="color:var(--al)">'+p.nm+' Score: <span id="ps'+pi+'">--</span>/50</strong></div>';h+=ac((pi+1)+'. '+p.nm,qh,'Pillar '+(pi+1))});
+h+=`<div class="cd" style="margin-top:24px"><h3><i class="fas fa-calculator"></i> Calculate</h3>
+<button class="bt" onclick="calcA()"><i class="fas fa-chart-bar"></i> Calculate Scores</button>
+<div id="ar" style="margin-top:20px"></div></div>
+<div class="cd"><h3>Scoring</h3><ul>
+<li><strong style="color:var(--ok)">45\u201350:</strong> Strength</li>
+<li><strong style="color:var(--in)">35\u201344:</strong> Competent</li>
+<li><strong style="color:var(--wn)">25\u201334:</strong> Development area</li>
+<li><strong style="color:var(--er)">Below 25:</strong> Urgent gap</li></ul></div>
+<div class="cd"><h3>Reflection</h3>
+<div class="fg"><label>Top 3 Strengths:</label>${ta('vas','Strongest pillars...',2)}</div>
+<div class="fg"><label>Bottom 3 Gaps:</label>${ta('vag','Areas needing work...',2)}</div>
+<div class="fg"><label>1\u20132 highest-leverage changes:</label>${ta('vai','What to change...',3)}</div></div></div>`;
+
+// ===== FLYWHEEL =====
+h+=`<div class="sc" id="s-fw"><div class="hd"><h1><i class="fas fa-circle-notch"></i> Flywheel Builder</h1><p>Based on Jim Collins\' <em>Good to Great</em>. A guided walkthrough for building your organization\'s flywheel.</p></div>
+
+<div class="cd"><h3>What Is the Flywheel?</h3>
+<div class="qb"><p>\"The process resembles relentlessly pushing a giant, heavy flywheel, turn upon turn, building momentum until a point of breakthrough, and beyond.\"</p><div class="qa">\u2014 Jim Collins, <em>Good to Great</em></div></div>
+<p style="margin-top:12px">The flywheel is <strong>not a strategy, a project plan, or a list of goals.</strong> It is the <em>underlying logic</em> of how your organization builds compounding momentum over time. Each component feeds the next in a self-reinforcing loop. Done right, every turn of the wheel makes the next turn easier. Done wrong, you get what Collins calls the <strong>Doom Loop</strong> \u2014 lurching between initiatives, never building the cumulative effect that separates great from good.</p>
+<p style="margin-top:12px;color:var(--t2)">Think of it this way: <em>A flywheel is to strategy what compounding interest is to investing.</em> No single push creates breakthrough. But hundreds of consistent, aligned pushes create something that becomes nearly impossible to stop.</p></div>
+
+<div class="cd"><h3>Key Principles</h3>
+<ul>
+<li><strong>Cumulative Effect:</strong> No single push, no single innovation, no single hire creates breakthrough. It is the relentless accumulation of consistent effort in one direction.</li>
+<li><strong>Consistency Over Intensity:</strong> Disciplined people + Disciplined thought + Disciplined action. Heroic one-time efforts are the enemy of the flywheel.</li>
+<li><strong>Each Turn Feeds the Next:</strong> Every component must directly enable the next. If you can\'t explain the causal link between steps, something is wrong.</li>
+<li><strong>The Doom Loop:</strong> Reactive pivots, flavor-of-the-month initiatives, and constant restructuring destroy momentum. The Doom Loop is what happens when leaders abandon the flywheel every time results don\'t come fast enough.</li>
+<li><strong>Hedgehog Concept:</strong> The flywheel must be grounded in the intersection of three circles: What you are deeply passionate about, What you can be the best in the world at, and What drives your economic engine.</li>
+</ul>
+<div class="cc" style="margin-top:16px"><h4>\u26A0\uFE0F Common Mistakes</h4><ul>
+<li>Building a <em>to-do list</em> disguised as a flywheel \u2014 each component must <strong>cause</strong> the next, not just follow it chronologically</li>
+<li>Having too many components (7+) \u2014 if it\'s that complex, you don\'t understand it well enough</li>
+<li>Skipping the Hedgehog Concept \u2014 a flywheel disconnected from your core is just a spinning wheel going nowhere</li>
+<li>Confusing <em>activity</em> with <em>momentum</em> \u2014 being busy is not the same as making progress</li>
+</ul></div></div>
+
+${ac('Step 1: Understand the Hedgehog Concept','<p style="margin-bottom:12px">Before you can build a flywheel, you must answer Jim Collins\' three Hedgehog questions. The flywheel is the <em>mechanism</em> by which you execute your Hedgehog Concept. Without it, you\'re building a machine with no purpose.</p><div class="ec" style="margin-bottom:16px"><h4>What This Is</h4><p>The Hedgehog Concept comes from Isaiah Berlin\'s essay: the fox knows many things, but the hedgehog knows one big thing. Great organizations find the one thing that sits at the intersection of three circles and then pursue it with relentless focus.</p></div><div class="pc"><div class="pq">\u{1F525} Circle 1: What are you deeply passionate about?</div><div class="ph">Not what you <em>should</em> be passionate about. What genuinely energizes this team? What work would you do even if you weren\'t paid for it? Where do your people come alive?</div>'+ta('fwp','Think beyond the job description. What makes your team light up?',3)+'</div><div class="pc"><div class="pq">\u{1F3C6} Circle 2: What can you be the best in the world at?</div><div class="ph">This is NOT about what you are currently good at. It\'s about what you have the <em>potential</em> to be the best at. What unique capability, if fully developed, would differentiate you? Equally important: what can you NOT be the best at, and do you have the honesty to stop doing it?</div>'+ta('fwb','Be brutally honest. What is your unfair advantage?',3)+'</div><div class="pc"><div class="pq">\u{1F4B0} Circle 3: What drives your economic (or resource) engine?</div><div class="ph">Collins asks: What is your \"profit per X\"? The single denominator that has the greatest impact on your economics. For a department, this might be: cost per hire, time to productivity, revenue per employee, or engagement score per team. What\'s the ONE ratio that matters most?</div>'+ta('fwe','Identify your key economic denominator...',3)+'</div><div class="pc"><div class="pq">\u{1F3AF} The Intersection: Where do all three circles overlap?</div><div class="ph">If all three circles don\'t overlap, you don\'t yet have a Hedgehog Concept. Stop and keep working until they do. This clarity is non-negotiable.</div>'+ta('fwh','Write one sentence that captures the intersection of all three circles.',3)+'</div>','Foundational')}
+
+${ac('Step 2: Map Your Flywheel Components','<p style="margin-bottom:12px">Now translate your Hedgehog Concept into 4\u20136 components that feed each other in a self-reinforcing cycle. The key test: <strong>can you say \"which enables us to...\" between each step?</strong></p><div class="ec" style="margin-bottom:16px"><h4>How to Think About Components</h4><p>Each component should be a <em>result</em>, not a task. \"Hire great people\" is a task. \"A team of disciplined, A-player talent\" is a flywheel component \u2014 it describes a <em>state</em> that creates the condition for the next component.</p><p style="margin-top:8px"><strong>Example (Amazon):</strong> Lower prices \u2192 More customers \u2192 More sellers \u2192 Better selection \u2192 Better experience \u2192 (feeds back to) Lower prices through scale.</p><p style="margin-top:8px"><strong>Example (HR):</strong> Attract top talent \u2192 Build high-performing teams \u2192 Deliver superior results \u2192 Strengthen employer brand \u2192 (feeds back to) Attract top talent.</p></div><div class="pc"><div class="pq">Component 1: The first push</div><div class="ph">What is the starting point of your momentum? What is the initial investment that everything else depends on?</div>'+ta('fc1','e.g., Attract and select disciplined, mission-aligned talent',2)+'</div><div class="pc"><div class="pq">Component 2: ...which enables us to...</div><div class="ph">What does component 1 make possible? What naturally follows when #1 is in place?</div>'+ta('fc2','',2)+'</div><div class="pc"><div class="pq">Component 3: ...which produces...</div><div class="ph">What does component 2 generate? What outcome emerges?</div>'+ta('fc3','',2)+'</div><div class="pc"><div class="pq">Component 4: ...which creates...</div><div class="ph">What does component 3 build or unlock?</div>'+ta('fc4','',2)+'</div><div class="pc"><div class="pq">Component 5 (optional): ...which leads to...</div>'+ta('fc5','',2)+'</div><div class="pc"><div class="pq">\u267B\uFE0F The Loop: How does the last component feed back into the first?</div><div class="ph">This is the most critical step. If the last component doesn\'t naturally reinforce the first, <strong>the flywheel is broken.</strong> A broken loop is just a linear project plan dressed up as a cycle.</div>'+ta('fcl','Explain the causal link that completes the loop.',3)+'</div><div class="pc"><div class="pq">\u{1F50A} The Read-Aloud Test</div><div class="ph">Read your flywheel out loud using \"which enables us to\" between each step. Does it flow naturally? Does each connection feel <em>causal</em>, not just <em>sequential</em>? If you stumble, the logic is weak.</div>'+ta('frt','Write out your full flywheel as one flowing paragraph.',4)+'</div>','Builder')}
+
+${ac('Step 3: Stress Test Your Flywheel','<p style="margin-bottom:12px">Collins warns that most organizations never confront the brutal facts about their own flywheel. This is where you apply the Stockdale Paradox: retain unwavering faith that you will prevail, AND confront the most brutal facts of your current reality.</p><div class="pc"><div class="pq">\u{1F50D} Weakest link: Which component is most fragile right now?</div><div class="ph">Every chain breaks at its weakest link. Which component, if it failed, would bring the entire flywheel to a halt? That\'s where your attention belongs.</div>'+ta('fs1','Be specific. Why is this the weak link?',3)+'</div><div class="pc"><div class="pq">\u{1F3AF} Hedgehog Alignment: Does every component trace back to your three circles?</div><div class="ph">If any component doesn\'t serve your passion, your \"best at,\" or your economic engine, it doesn\'t belong. Remove it \u2014 no matter how much time you\'ve already invested.</div>'+ta('fs2','Test each component against all three circles.',3)+'</div><div class="pc"><div class="pq">\u{1F6D1} Doom Loop Check: What reactive initiatives should you STOP?</div><div class="ph">Collins found that comparison companies constantly launched new initiatives, restructured, and pivoted \u2014 never staying with anything long enough to build momentum. What are you doing right now that isn\'t part of the flywheel? Those things are stealing energy from what matters.</div>'+ta('fs3','List everything that does not feed the flywheel.',3)+'</div><div class="pc"><div class="pq">\u{1F9E0} Peer Challenge: Who has pushed back on your flywheel?</div><div class="ph">Collins emphasizes that great ideas survive debate. Share your flywheel with 2\u20133 trusted colleagues. What did they challenge? What couldn\'t you defend? The parts you can\'t defend are the parts that need more work.</div>'+ta('fs5','What feedback did you receive? What changed?',3)+'</div><div class="pc"><div class="pq">\u26A1 Single most important push THIS QUARTER</div><div class="ph">You can\'t push everything at once. Which one component, if strengthened this quarter, would have the greatest accelerating effect on the entire flywheel?</div>'+ta('fs4','One component. One quarter. Total focus.',2)+'</div>','Critical')}
+
+${ac('Step 4: Define Momentum Metrics','<p style="margin-bottom:12px">\"What gets measured gets managed.\" But more importantly: <strong>what gets measured <em>frequently</em> gets improved.</strong> You need both leading indicators (weekly signals that you\'re pushing the wheel) and lagging indicators (quarterly/annual proof that momentum is building).</p><div class="ec" style="margin-bottom:16px"><h4>Leading vs. Lagging</h4><p><strong>Leading indicators</strong> are things you can influence directly and measure weekly. They predict future results. Examples: number of qualified candidates in pipeline, % of managers completing development conversations, employee referral rate.</p><p style="margin-top:8px"><strong>Lagging indicators</strong> are outcomes. They confirm momentum but can\'t be directly controlled. Examples: voluntary turnover rate, revenue per employee, engagement survey scores.</p></div><div class="fg"><label>Leading Indicator 1 (weekly signal):</label>'+ta('fl1','What can you measure weekly that shows the wheel is turning?',1)+'</div><div class="fg"><label>Leading Indicator 2:</label>'+ta('fl2','',1)+'</div><div class="fg"><label>Leading Indicator 3:</label>'+ta('fl3','',1)+'</div><div class="fg"><label>Lagging Indicator (quarterly/annual outcome):</label>'+ta('fll','The ultimate proof that momentum is building.',1)+'</div><div class="pc"><div class="pq">\u{1F4C5} Review cadence: How often will you review these metrics, and with whom?</div><div class="ph">Metrics without a review rhythm are decoration. Who owns each metric? When do you review? What decisions are triggered when a metric moves?</div>'+ta('flr','Define your review cadence and accountability structure.',3)+'</div>','Metrics')}
+
+${ac('Step 5: Commit and Communicate','<p style="margin-bottom:12px">A flywheel that lives in your head or in this tool but nowhere else will die. Collins found that great organizations made the flywheel <em>the language of the organization</em> \u2014 people at every level could explain it.</p><div class="pc"><div class="pq">\u{1F4E3} Can you explain your flywheel in 60 seconds?</div><div class="ph">If you can\'t explain it simply, you don\'t understand it well enough. Write your flywheel as a short narrative that anyone in your organization could understand.</div>'+ta('fwn','Write your 60-second flywheel pitch here.',4)+'</div><div class="pc"><div class="pq">\u{1F6D1} The \"Stop Doing\" List</div><div class="ph">Collins argues this is MORE important than a to-do list. What initiatives, meetings, reports, or projects are you going to <strong>stop</strong> because they don\'t feed the flywheel? Stopping takes more courage than starting.</div>'+ta('fws','List what you will stop doing to protect the flywheel.',3)+'</div><div class="pc"><div class="pq">\u{1F4AC} Communication Plan: How will you share the flywheel with your team?</div><div class="ph">Remember the Vespertide principle of Vision: repeat key messages 6+ times through multiple mediums. How will you make the flywheel visible and understood across your team?</div>'+ta('fwc','How will you introduce and reinforce the flywheel with your team?',3)+'</div>','Final')}
+
+<div class="cd"><h3>Flywheel Reflection</h3>
+<div class="pc"><div class="pq">Where is your team settling for good and avoiding great?</div><div class="ph">This is the central question of Collins\' work. Good is the enemy of great. Most organizations settle for good because good is comfortable and great requires confronting uncomfortable truths.</div>${ta('fwr','Be brutally honest about where you are settling...',4)}</div>
+<div class="pc"><div class="pq">What would Jim Collins say about your flywheel if he reviewed it today?</div><div class="ph">Would he see a true self-reinforcing loop, or a dressed-up project plan? Would he see disciplined thinking, or wishful thinking?</div>${ta('fwj','Pressure-test your own work.',3)}</div>
+<button class="bt" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+// ===== A3 =====
+h+=`<div class="sc" id="s-a3"><div class="hd"><h1><i class="fas fa-file-lines"></i> A3 Problem Solving</h1><p>Based on John Shook\'s <em>Managing to Learn</em>. A structured thinking discipline that develops both the solution and the solver.</p></div>
+
+<div class="cd"><h3>What Is A3 Thinking?</h3>
+<div class="qb"><p>\"The A3 is a way of thinking. The paper is just the medium.\"</p><div class="qa">\u2014 John Shook, <em>Managing to Learn</em></div></div>
+<p style="margin-top:12px">The A3 is named after the paper size (11\" x 17\") because of a deceptively simple constraint: <strong>if you can\'t explain it on one page, you don\'t understand it well enough.</strong> But the A3 is much more than a template \u2014 it is a <em>dialogue tool</em> and a <em>thinking discipline</em> rooted in Toyota\'s management system.</p>
+<p style="margin-top:12px;color:var(--t2)">The real power of A3 thinking is in the <em>process</em>, not the paper. You draft it, share it, get challenged, revise it, share it again. The A3 forces you to slow down, go see the actual problem, understand before solving, and earn consensus through evidence rather than authority.</p>
+<div class="ec" style="margin-top:16px"><h4>Core Principles Behind A3</h4><ul>
+<li><strong>PDCA (Plan-Do-Check-Act):</strong> The A3 is a PDCA cycle on paper. The left side is Plan (understand), the right side is Do/Check/Act (solve and learn).</li>
+<li><strong>Genchi Genbutsu (Go and See):</strong> Never write an A3 from your desk. Go to where the work happens. Observe. Talk to the people doing the work. Your assumptions are probably wrong.</li>
+<li><strong>Nemawashi (Building Consensus):</strong> Share your draft A3 with stakeholders <em>before</em> proposing solutions. Let them challenge your understanding. The A3 builds alignment through evidence, not persuasion.</li>
+<li><strong>Respect for People:</strong> The A3 develops problem-solvers, not just solutions. As a leader, your job is to coach people through the A3 process, asking questions rather than giving answers.</li>
+</ul></div></div>
+
+<div class="cd"><h3>The A3 Structure</h3>
+<p>The A3 has two sides. The <strong>left side</strong> (Understanding) should consume roughly <strong>70% of your effort.</strong> Most people rush to the right side (solutions). Resist that urge. A well-understood problem is already half-solved.</p>
+<div class="g2" style="margin-top:12px">
+<div class="cd" style="border-left:3px solid var(--in)"><h4 style="color:var(--in)">Left Side: Understanding</h4><p>1. Title/Theme<br>2. Background<br>3. Current Condition<br>4. Target Condition<br>5. Root Cause Analysis</p><p style="margin-top:8px;color:var(--t3);font-size:.8rem">Spend 70% of your time here</p></div>
+<div class="cd" style="border-left:3px solid var(--ok)"><h4 style="color:var(--ok)">Right Side: Action</h4><p>6. Countermeasures<br>7. Implementation Plan<br>8. Follow-Up</p><p style="margin-top:8px;color:var(--t3);font-size:.8rem">Only move here when the left side is solid</p></div></div></div>
+
+<div class="cd" style="border-left:3px solid var(--in)"><h3 style="color:var(--in)">Left Side: Understanding</h3><p style="color:var(--t2)">Resist the urge to jump to solutions. Sit with the problem.</p></div>
+
+${ac('1. Title / Theme','<p style="margin-bottom:12px">The title frames everything. A vague title produces a vague A3. A specific title forces specific thinking.</p><div class="cc" style="margin-bottom:16px"><h4>\u26A0\uFE0F Vague vs. Specific</h4><div class="g2"><div><p style="color:var(--er)"><strong>Vague:</strong></p><ul><li>\"Improve onboarding\"</li><li>\"Fix retention\"</li><li>\"Better communication\"</li></ul></div><div><p style="color:var(--ok)"><strong>Specific:</strong></p><ul><li>\"Reduce time-to-productivity from 90 to 45 days for production hires\"</li><li>\"Reduce first-year voluntary turnover from 32% to 18% in Plant A\"</li><li>\"Ensure 100% of leaders hold weekly 1:1s by Q3\"</li></ul></div></div></div><div class="pc"><div class="pq">What specific problem or opportunity are you addressing?</div><div class="ph">Write it as a measurable outcome, not a topic. Include numbers, timeframes, and scope.</div>'+ta('at','',2)+'</div>','Left Side')}
+
+${ac('2. Background','<p style="margin-bottom:12px">The background establishes <em>why this matters now</em> and gives the reader enough context to understand the significance of the problem without being an expert in it.</p><div class="ec" style="margin-bottom:16px"><h4>What Good Background Includes</h4><ul><li>Business context: What is happening in the organization that makes this relevant?</li><li>History: What has been tried before? What happened?</li><li>Urgency: Why now? What is the cost of inaction?</li><li>Scope: What is IN and OUT of this A3?</li></ul></div><div class="pc"><div class="pq">Business context: Why does this matter to the organization?</div><div class="ph">Connect the problem to business outcomes. A CEO should be able to read this and understand why resources should be allocated.</div>'+ta('abg','',3)+'</div><div class="pc"><div class="pq">What has been tried before, and what happened?</div><div class="ph">Understanding past attempts prevents repeating failed approaches and shows respect for previous efforts.</div>'+ta('abh','',3)+'</div><div class="pc"><div class="pq">Stakeholders affected: Who feels this problem, and how?</div><div class="ph">List every group impacted \u2014 not just the team \"owning\" the problem. Who is the customer of the process you\'re examining?</div>'+ta('ast','',2)+'</div><div class="pc"><div class="pq">Why now? What is the cost of doing nothing?</div><div class="ph">Quantify the cost of inaction if you can. If not, describe the risk in concrete terms.</div>'+ta('aby','',2)+'</div>','Left Side')}
+
+${ac('3. Current Condition','<p style="margin-bottom:12px">This is where <strong>Genchi Genbutsu</strong> (go and see) becomes essential. You cannot understand the current condition from reports, dashboards, or secondhand accounts. You must go to the gemba \u2014 the actual place where work happens \u2014 and observe with your own eyes.</p><div class="cc" style="margin-bottom:16px"><h4>\u26A0\uFE0F The Desk Trap</h4><p>If you wrote your Current Condition section without leaving your desk, start over. Data is important but insufficient. The gap between what people <em>say</em> happens and what <em>actually</em> happens is where the real insight lives.</p></div><div class="pc"><div class="pq">What is actually happening? Describe facts, not opinions.</div><div class="ph">Separate observation from interpretation. \"Only 40% of new hires complete orientation tasks by day 30\" is a fact. \"Onboarding is bad\" is an opinion.</div>'+ta('acu','Describe what you observed and measured. Facts and data only.',4)+'</div><div class="pc"><div class="pq">What metrics describe current performance?</div><div class="ph">Use numbers. Rates, counts, percentages, cycle times, costs. If you don\'t have data, that itself is a finding worth noting.</div>'+ta('acd','Numbers, rates, trends...',2)+'</div><div class="pc"><div class="pq">What did going to the gemba reveal?</div><div class="ph">What surprised you when you went and saw for yourself? What did you learn from talking to the people doing the actual work? What did you see that you didn\'t expect?</div>'+ta('acg','What did you see that you did not expect?',3)+'</div><div class="pc"><div class="pq">Who did you talk to? What did they tell you?</div><div class="ph">Respect for people means listening to the voices closest to the problem. Frontline workers often understand the root cause better than leaders do.</div>'+ta('acv','Capture direct quotes and observations from the people doing the work.',3)+'</div>','Left Side')}
+
+${ac('4. Target Condition','<p style="margin-bottom:12px">The target condition is not a wish list \u2014 it is a <strong>specific, measurable description</strong> of what \"improved\" looks like. It must be realistic enough to achieve but ambitious enough to require real change.</p><div class="ec" style="margin-bottom:16px"><h4>Good Target Conditions Are:</h4><ul><li><strong>Specific:</strong> \"Reduce from X to Y\" not \"improve\" or \"better\"</li><li><strong>Measurable:</strong> You\'ll know unambiguously whether you\'ve achieved it</li><li><strong>Time-bound:</strong> By when?</li><li><strong>Connected to the gap:</strong> The target should directly address the gap between current and desired states</li></ul></div><div class="pc"><div class="pq">What does the improved state look like, specifically?</div><div class="ph">Describe it so vividly that anyone reading it could tell you whether you\'ve achieved it or not.</div>'+ta('atg','Paint a concrete picture of the future state.',3)+'</div><div class="pc"><div class="pq">Success metrics: How will you know you\'ve arrived?</div><div class="ph">These should directly mirror the metrics you documented in the Current Condition. The gap between \"current\" and \"target\" metrics IS the problem you\'re solving.</div>'+ta('atm','Define the specific numbers that will prove success.',2)+'</div><div class="pc"><div class="pq">By when?</div>'+ta('atw','Set a specific date.',1)+'</div><div class="pc"><div class="pq">Is this target achievable with the resources and authority you have?</div><div class="ph">If not, either narrow the scope or identify what additional support you need. An unrealistic target undermines the entire A3.</div>'+ta('atr','Be honest about constraints.',2)+'</div>','Left Side')}
+
+${ac('5. Root Cause Analysis (5 Whys)','<p style="margin-bottom:12px">This is the most important \u2014 and most commonly rushed \u2014 step. The 5 Whys technique forces you below the surface to find the <em>systemic</em> cause, not just the symptom.</p><div class="cc" style="margin-bottom:16px"><h4>\u26A0\uFE0F The Shallow Root Cause Trap</h4><p>Most people stop at the first or second \"why\" because the answer feels satisfying. \"Why is turnover high? Because pay is low.\" That feels like a root cause, but it\'s usually a symptom. Keep asking. \"Why is pay low? Because we haven\'t done a market analysis in 3 years. Why? Because nobody owns the compensation review process.\" <em>Now</em> you\'re getting somewhere.</p><p style="margin-top:8px"><strong>The test:</strong> If your countermeasure only treats the symptom, you stopped asking \"why\" too soon.</p></div><div class="ec" style="margin-bottom:16px"><h4>5 Whys Discipline</h4><ul><li>Ask \"why does this condition exist?\" not \"who caused this?\"</li><li>Each \"why\" should be supported by evidence, not assumptions</li><li>If you branch into multiple causes, follow each branch</li><li>The root cause should be something you can act on \u2014 if it\'s \"human nature\" or \"the economy,\" you\'ve gone too abstract</li></ul></div><div class="fg"><label>Problem statement:</label>'+ta('aw0','Restate the problem from your current condition.',1)+'</div><div class="fg"><label>Why does this happen? (1)</label>'+ta('aw1','First-level cause. Support with evidence.',1)+'</div><div class="fg"><label>Why? (2)</label>'+ta('aw2','Go deeper. What creates the condition in #1?',1)+'</div><div class="fg"><label>Why? (3)</label>'+ta('aw3','Keep going. Resist the urge to jump to solutions.',1)+'</div><div class="fg"><label>Why? (4)</label>'+ta('aw4','Almost there. What systemic factor is at work?',1)+'</div><div class="fg"><label>Why? (5 \u2014 root cause)</label>'+ta('aw5','This should be a systemic issue you can act on.',1)+'</div><div class="pc"><div class="pq">Systemic factors: What processes, structures, or cultural patterns contribute?</div><div class="ph">Root causes are almost always systemic, not individual. Look for: missing processes, unclear ownership, misaligned incentives, broken feedback loops, or skills gaps in the system (not just one person).</div>'+ta('asy','What patterns, structures, or systems allow this problem to persist?',3)+'</div>','Left Side')}
+
+<div class="cd" style="border-left:3px solid var(--ok)"><h3 style="color:var(--ok)">Right Side: Taking Action</h3><p style="color:var(--t2)">Now \u2014 and only now \u2014 propose solutions that address the root causes.</p></div>
+
+${ac('6. Countermeasures','<p style="margin-bottom:12px">Shook uses the word \"countermeasures\" deliberately, not \"solutions.\" A solution implies permanence. A countermeasure implies experimentation \u2014 it\'s your best hypothesis, not your final answer.</p><div class="ec" style="margin-bottom:16px"><h4>What Makes a Good Countermeasure</h4><ul><li><strong>Directly addresses a root cause:</strong> Every countermeasure should trace back to a specific \"why\" from your root cause analysis. If it doesn\'t, it\'s treating a symptom.</li><li><strong>Testable:</strong> Can you pilot it before scaling?</li><li><strong>Owned:</strong> Someone specific is accountable for each countermeasure.</li><li><strong>Resourced:</strong> You\'ve identified what\'s needed (time, budget, authority).</li></ul></div><div class="pc"><div class="pq">What countermeasures will you implement?</div><div class="ph">For each countermeasure, note which root cause it addresses. If a root cause has no countermeasure, your plan is incomplete. If a countermeasure addresses no root cause, remove it.</div>'+ta('acm','List each countermeasure and the root cause it addresses.',4)+'</div><div class="pc"><div class="pq">Who owns each countermeasure? By when? What resources are needed?</div><div class="ph">Accountability without a name and a date is not accountability. Be specific.</div>'+ta('acw','Owner | Deadline | Resources for each countermeasure.',3)+'</div><div class="pc"><div class="pq">What will you try first? How will you know if it\'s working?</div><div class="ph">Start with the countermeasure that addresses the deepest root cause or has the highest leverage. Define what \"working\" looks like before you begin.</div>'+ta('acf','Define your first experiment and its success criteria.',3)+'</div>','Right Side')}
+
+${ac('7. Implementation Plan','<p style="margin-bottom:12px">Translate your countermeasures into a step-by-step plan. The implementation plan should be detailed enough that someone else could execute it, but flexible enough to adapt as you learn.</p><div class="pc"><div class="pq">Step-by-step plan:</div><div class="ph">Sequence your actions. What must happen first, second, third? Who does each step? What are the dependencies?</div>'+ta('aim','',4)+'</div><div class="pc"><div class="pq">Milestones and check-ins:</div><div class="ph">Build in regular check-ins to assess progress. The purpose of check-ins is not to report status \u2014 it\'s to learn and adjust. What will you review? How often? With whom?</div>'+ta('ami','',2)+'</div><div class="pc"><div class="pq">Anticipated obstacles: What could go wrong?</div><div class="ph">Pre-mortems are powerful. Imagine it\'s 90 days from now and the plan failed. What went wrong? Now plan for those scenarios.</div>'+ta('aob','',3)+'</div><div class="pc"><div class="pq">Communication plan: Who needs to know what, and when?</div><div class="ph">Nemawashi (building consensus) doesn\'t end when you start implementing. Keep stakeholders informed and engaged throughout.</div>'+ta('acp','',2)+'</div>','Right Side')}
+
+${ac('8. Follow-Up and Learning','<p style="margin-bottom:12px">This is where most A3s die. The follow-up section is what transforms a one-time exercise into a <strong>learning cycle.</strong> Without it, you\'ve written a report, not practiced A3 thinking.</p><div class="ec" style="margin-bottom:16px"><h4>The PDCA Connection</h4><p>Follow-up IS the \"Check\" and \"Act\" in PDCA. You planned (left side), you did (countermeasures + implementation), now you check (did it work?) and act (what do we adjust?). Then the cycle begins again.</p></div><div class="pc"><div class="pq">How and when will you check results?</div><div class="ph">Specify the exact date, the exact metrics, and who will review. Make it a calendar event, not a vague intention.</div>'+ta('afu','Define your review date, metrics, and reviewers.',2)+'</div><div class="pc"><div class="pq">What did you learn \u2014 about the problem AND about your thinking?</div><div class="ph">The A3 develops the problem-solver as much as it solves the problem. What assumptions did you have that were wrong? What surprised you? How has your understanding of the system changed?</div>'+ta('ale','Reflect on what you learned about the problem and yourself.',3)+'</div><div class="pc"><div class="pq">Adjustments for the next cycle:</div><div class="ph">PDCA is a cycle, not a line. Based on what you learned, what changes for the next turn? What new questions emerged?</div>'+ta('aad','What will you do differently in the next iteration?',2)+'</div><div class="pc"><div class="pq">Who will you share this A3 with, and what feedback will you seek?</div><div class="ph">The A3 is a dialogue tool. It is meant to be shared, challenged, and improved. Who needs to see this? What specific questions will you ask them?</div>'+ta('ash','List who you will share with and what you want them to challenge.',2)+'</div>','Right Side')}
+
+<div class="cd"><h3>A3 Thinking Reminders</h3>
+<ul>
+<li><strong>Go and see (Genchi Genbutsu)</strong> \u2014 Never rely solely on reports or secondhand information. Go to where the work happens.</li>
+<li><strong>Ask \"why?\" not \"who?\"</strong> \u2014 The A3 is about systems, not blame. When you find yourself looking for a person to hold responsible, redirect to the process that allowed the problem.</li>
+<li><strong>Share your A3</strong> \u2014 An A3 that lives in a drawer serves no one. Share it, invite pushback, and welcome the discomfort of being challenged.</li>
+<li><strong>Iterate</strong> \u2014 Your first draft will be wrong. Your second will be better. Your third might be right. That\'s the point.</li>
+<li><strong>70/30 Rule</strong> \u2014 Spend 70% of your effort understanding the problem (left side) and 30% on solutions (right side). If you\'re spending more time on solutions, you\'re probably solving the wrong problem.</li>
+<li><strong>Coach, don\'t solve</strong> \u2014 If someone brings you their A3, ask questions. Don\'t give answers. \"What did you see when you went to the gemba?\" \"How do you know that\'s the root cause?\" \"What would happen if you did nothing?\"</li>
+</ul>
+<div class="pc" style="margin-top:16px"><div class="pq">Coaching Questions for Reviewing Someone Else\'s A3</div><div class="ph">Use these when a team member brings you their A3 for review:</div></div>
+<ul style="margin-top:8px">
+<li>\"Walk me through what you saw when you went and observed.\"</li>
+<li>\"How do you know this is the root cause and not a symptom?\"</li>
+<li>\"What would happen if you did nothing?\"</li>
+<li>\"Who disagrees with your analysis? What do they see that you don\'t?\"</li>
+<li>\"If your countermeasure works, will the root cause actually be addressed?\"</li>
+<li>\"What are you most uncertain about?\"</li>
+<li>\"What will you check first, and when?\"</li>
+</ul>
+<button class="bt" style="margin-top:16px" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+// ===== CEO PREP =====
+h+=`<div class="sc" id="s-ceo"><div class="hd"><h1><i class="fas fa-user-tie"></i> CEO Meeting Prep</h1><p>Think at 30,000 feet \u2014 strategy, risk, talent, outcomes.</p></div>
+<div class="cd"><h3>The CEO Mindset</h3><ul>
+<li><strong>Leverage:</strong> Highest ROI on their time</li>
+<li><strong>Trade-offs:</strong> Every yes is a no</li>
+<li><strong>Risk:</strong> What could derail us?</li>
+<li><strong>People:</strong> Right people, right seats?</li>
+<li><strong>Time-starved:</strong> Lead with the headline</li></ul></div>
+${ac('Frame the Conversation','<div class="pc"><div class="pq">ONE thing you want the CEO to know, decide, or act on?</div>'+ta('c1','',2)+'</div><div class="pc"><div class="pq">Why does this matter to the BUSINESS?</div>'+ta('c2','Revenue, risk, talent, advantage...',3)+'</div><div class="pc"><div class="pq">Your recommendation?</div>'+ta('c3','Bring a POV, not just a problem',3)+'</div><div class="pc"><div class="pq">Supporting data (2\u20133 points)?</div>'+ta('c4','',2)+'</div>')}
+${ac("Anticipate CEO Questions","<div class=\"pc\"><div class=\"pq\">Financial impact?</div>"+ta('cq1','',2)+"</div><div class=\"pc\"><div class=\"pq\">Risks of action vs. inaction?</div>"+ta('cq2','',2)+"</div><div class=\"pc\"><div class=\"pq\">Alignment with strategic plan?</div>"+ta('cq3','',2)+"</div><div class=\"pc\"><div class=\"pq\">Do we have the right people?</div>"+ta('cq4','',2)+"</div><div class=\"pc\"><div class=\"pq\">Timeline?</div>"+ta('cq5','',2)+"</div><div class=\"pc\"><div class=\"pq\">What am I not seeing?</div>"+ta('cq6','The hard truth...',2)+"</div>")}
+${ac('60-Second Pitch','<p style="margin-bottom:12px"><strong>Headline \u2192 Context \u2192 Recommendation \u2192 Ask</strong></p><div class="pc"><div class="pq">Write it. Practice out loud.</div>'+ta('cp','',4)+'</div>')}
+${ac('Post-Meeting Debrief','<div class="fg"><label>What resonated?</label>'+ta('cd1','',2)+'</div><div class="fg"><label>Questions not anticipated?</label>'+ta('cd2','',2)+'</div><div class="fg"><label>Action items:</label>'+ta('cd3','',2)+'</div><div class="fg"><label>What to do differently?</label>'+ta('cd4','',2)+'</div>')}
+<div class="cd"><button class="bt" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+// ===== BL PREP =====
+h+=`<div class="sc" id="s-bl"><div class="hd"><h1><i class="fas fa-briefcase"></i> Business Leader Prep</h1><p>Prepare for meetings with VPs, Directors, and senior leaders. Your goal: show up as a strategic partner, not an order-taker.</p></div>
+
+<div class="cd"><h3>The Business Leader Mindset</h3>
+<p style="margin-bottom:12px">Business leaders live in a different world than HR. Understanding their mindset is the first step to earning a seat at the table.</p>
+<ul>
+<li><strong>Execution-obsessed:</strong> They think in terms of deliverables, deadlines, and results. \"How do I deliver with this team?\" is the question running through their head at all times. Your value is in helping them answer it.</li>
+<li><strong>Competing priorities:</strong> They are juggling more than you see. Every ask you bring them competes with ten others. Help them prioritize \u2014 don\'t add to the pile.</li>
+<li><strong>Speed over perfection:</strong> They\'d rather have 80% right now than 100% next month. Match their pace. Bring a recommendation, not a list of options.</li>
+<li><strong>Confidant need:</strong> They rarely have someone safe to think out loud with about talent. Be that person. Earn that trust by being discreet, direct, and judgment-free.</li>
+<li><strong>Results-oriented:</strong> Everything must connect to their KPIs. If you can\'t explain how your recommendation impacts their numbers, they won\'t hear it.</li>
+</ul>
+<div class="qb" style="margin-top:16px"><p>\"Think like a business person who happens to know HR \u2014 not an HR person who happens to work in a business.\"</p></div></div>
+
+<div class="cd"><h3>Pre-Meeting Data Pull</h3>
+<p style="margin-bottom:12px;color:var(--t2)">Before any meeting with a business leader, gather this intelligence. Walking in without it signals you\'re not serious about the partnership.</p>
+<ul>
+<li><strong>Headcount:</strong> Current vs. budgeted. Open positions. Time-to-fill on critical roles.</li>
+<li><strong>Turnover:</strong> Voluntary and involuntary, trailing 12 months. Regrettable losses specifically.</li>
+<li><strong>Performance distribution:</strong> How many high performers, solid performers, underperformers on their team?</li>
+<li><strong>Engagement data:</strong> Latest survey results for their area. Trends \u2014 improving or declining?</li>
+<li><strong>Pending ER/compliance matters:</strong> Anything active that could surface?</li>
+<li><strong>Upcoming milestones:</strong> Promotions, transfers, leaves, anniversaries, performance reviews due.</li>
+<li><strong>Their P&L or KPIs:</strong> Know their numbers. Revenue, costs, margins, efficiency metrics \u2014 whatever they\'re measured on.</li>
+</ul></div>
+
+${ac('Know Their World','<p style="margin-bottom:12px">You can\'t advise someone whose world you don\'t understand. The best HR partners know their leader\'s business as well as the leader does \u2014 sometimes better, because they see patterns across teams the leader can\'t see.</p><div class="pc"><div class="pq">What are their top 3 business priorities right now?</div><div class="ph">Not what they told you three months ago \u2014 what\'s keeping them up at night <em>this week</em>? If you don\'t know, that\'s your first conversation.</div>'+ta('b1','',3)+'</div><div class="pc"><div class="pq">What people challenges are blocking their success?</div><div class="ph">Leaders often won\'t name these directly. Listen for signals: frustration with a team member, complaints about \"not having the right people,\" mentions of missed deadlines or quality issues. Translate those into the people problem underneath.</div>'+ta('b2','',3)+'</div><div class="pc"><div class="pq">What do they SAY they need vs. what they ACTUALLY need?</div><div class="ph">This is where strategic HR partners earn their value. A leader says \"I need to hire two more people.\" What they actually need might be: a performance conversation with someone underperforming, a reorg of responsibilities, or better tools. Diagnose before prescribing.</div>'+ta('b3','',3)+'</div><div class="pc"><div class="pq">What pressure are THEY under from their boss?</div><div class="ph">Your leader has a leader too. Understanding the cascade of pressure helps you anticipate needs and speak their language. What commitments have they made upward?</div>'+ta('b4','',3)+'</div><div class="pc"><div class="pq">What decisions are coming that have a people component?</div><div class="ph">Reorganizations, new products, budget cuts, expansions, technology changes \u2014 all of these have people implications. Are you at the table before the decision, or cleaning up after?</div>'+ta('b5','',3)+'</div>','Prep')}
+
+${ac('Agenda Builder','<p style="margin-bottom:12px">A good meeting with a business leader has 2\u20133 focused topics, not a laundry list. You should be driving the agenda at least 50% of the time \u2014 if they\'re always setting it, you\'re reactive.</p><div class="ec" style="margin-bottom:16px"><h4>Strategic Agenda Framing</h4><p>For each topic, prepare: <strong>the headline</strong> (one sentence on what this is about), <strong>the insight</strong> (what you see that they might not), and <strong>the recommendation</strong> (your point of view). Leaders don\'t want you to bring problems \u2014 they want you to bring problems with recommendations attached.</p></div><div class="pc"><div class="pq">Topic 1:</div><div class="ph">Headline | Insight | Recommendation</div>'+ta('bt1','',2)+'</div><div class="pc"><div class="pq">Topic 2:</div><div class="ph">Headline | Insight | Recommendation</div>'+ta('bt2','',2)+'</div><div class="pc"><div class="pq">Topic 3:</div><div class="ph">Headline | Insight | Recommendation</div>'+ta('bt3','',2)+'</div><div class="pc"><div class="pq">Probing questions to help them see around corners:</div><div class="ph">These are the high-value questions that elevate you from order-taker to strategic partner. Good examples:</div></div><ul style="margin:8px 0 12px 18px;color:var(--t2);font-size:.85rem"><li>\"If you fast-forward 6 months and this doesn\'t improve, what happens?\"</li><li>\"What\'s the one thing you\'d change about your team if you could?\"</li><li>\"Who on your team is ready for more? Who isn\'t keeping up?\"</li><li>\"What\'s the conversation you know you need to have but haven\'t had?\"</li><li>\"If I could solve one people problem for you this quarter, what would it be?\"</li><li>\"What does your team need to hear from you that they\'re not hearing?\"</li></ul>'+ta('bpr','Write your probing questions for this specific meeting.',3)+'','Prep')}
+
+${ac('Talent Review Deep Dive','<p style="margin-bottom:12px">This is where you add the most value. Leaders think about talent in isolation \u2014 one person at a time. You see the patterns across the team. Bring that pattern-recognition to the conversation.</p><div class="pc"><div class="pq">High performers: Who needs to be developed and retained?</div><div class="ph">For each high performer, ask: Are they challenged? Do they feel valued? What\'s their career aspiration? What\'s our retention risk? What\'s the development plan? A high performer without a development plan is a flight risk.</div>'+ta('bhi','Name each person. Note their aspiration and retention risk.',3)+'</div><div class="pc"><div class="pq">Underperformers: Who needs attention NOW?</div><div class="ph">For each underperformer, be prepared to discuss: Is this a skill issue, a will issue, or a fit issue? How long has this been going on? What has been tried? What\'s the honest prognosis? Is the leader avoiding the conversation?</div>'+ta('blo','Name each person. Note skill vs. will vs. fit and timeline.',3)+'</div><div class="pc"><div class="pq">Succession gaps: If someone left tomorrow, who\'s ready?</div><div class="ph">Look at every critical role in the leader\'s org. For each, answer: who\'s ready now, who\'s ready in 1\u20132 years, who has no successor? The gaps you identify are where the leader is most vulnerable.</div>'+ta('bsu','Map critical roles to successor readiness.',3)+'</div><div class="pc"><div class="pq">Team health: What\'s the culture and energy of this team?</div><div class="ph">Beyond individual performance, assess the team as a system. Is there trust? Do they collaborate or compete? Is there psychological safety? What does the leader model? Sometimes the team\'s issues are a mirror of the leader\'s blind spots.</div>'+ta('bhl','Assess trust, collaboration, energy, and dynamics.',3)+'</div><div class="pc"><div class="pq">The courageous conversation: What do YOU see that the leader doesn\'t?</div><div class="ph">This is where Courage from the Vespertide Framework comes in. What truth needs to be spoken? A leader who\'s too close to a favorite. A team that\'s burning out. A performance gap being rationalized away. Bring the hard truth with data, empathy, and a recommendation.</div>'+ta('bcv','What is the hard truth you need to bring?',3)+'</div>','Review')}
+
+${ac('Strategic HR Partner Checklist','<p style="margin-bottom:12px">Use this before every meeting to check whether you\'re showing up as a strategic partner or as a transactional support function.</p><ul>
+<li><strong>\u2611 Know their numbers:</strong> P&L, KPIs, efficiency metrics, budget. If you don\'t know their business metrics, you can\'t speak their language.</li>
+<li><strong>\u2611 Know their people:</strong> Have a point of view on every direct report on their team. Strengths, risks, development needs, career aspirations. If they mention a name, you should have context ready.</li>
+<li><strong>\u2611 Bring insights, not just data:</strong> Don\'t just report that turnover is 22%. Say \"turnover is 22%, concentrated in your top performers within the first 18 months \u2014 which suggests an onboarding or manager quality issue, not a compensation issue.\"</li>
+<li><strong>\u2611 Anticipate, don\'t react:</strong> What\'s coming in the next 30\u201390 days that has a people component? Bring it up before they ask.</li>
+<li><strong>\u2611 Be courageous:</strong> Challenge respectfully. The best HR partners are willing to say \"I disagree\" when the leader is about to make a people mistake. You\'re not there to be liked \u2014 you\'re there to be trusted.</li>
+<li><strong>\u2611 Follow through:</strong> Every single time. Reliability is the foundation of trust. If you say you\'ll do something, do it by when you said you would. No exceptions.</li>
+<li><strong>\u2611 Think like a business person who knows HR:</strong> Not the other way around. Lead with business impact. Connect every HR recommendation to a business outcome.</li>
+</ul>
+<div class="pc" style="margin-top:16px"><div class="pq">Self-Assessment: On a scale of 1\u201310, how well did you prepare for THIS meeting?</div><div class="ph">Be honest. If it\'s below a 7, what did you skip? What would make it a 10 next time?</div>${ta('bsa','Rate yourself and note what to improve.',2)}</div>','Checklist')}
+
+${ac('Probing Questions by Domain','<p style="margin-bottom:12px">Use these question banks to go deeper in specific areas. The best HR partners don\'t just answer questions \u2014 they ask better ones than anyone else in the room.</p><h4 style="color:var(--al);margin-top:12px">Strategy and Alignment</h4><ul><li>\"What are you saying no to in order to focus?\"</li><li>\"How would you describe your team\'s strategy in one sentence?\"</li><li>\"What would you do differently if you had to start this team from scratch?\"</li><li>\"What are you most worried about that you haven\'t told anyone?\"</li></ul><h4 style="color:var(--al);margin-top:12px">Talent and Performance</h4><ul><li>\"If you could only keep 3 people on your team, who and why?\"</li><li>\"Who has outgrown their role? Who hasn\'t grown into theirs?\"</li><li>\"What feedback are you avoiding giving? Why?\"</li><li>\"What would it take to turn your B players into A players?\"</li></ul><h4 style="color:var(--al);margin-top:12px">Team Health and Culture</h4><ul><li>\"If I talked to your team anonymously, what would they say about the culture here?\"</li><li>\"When was the last time someone on your team openly disagreed with you?\"</li><li>\"What behaviors are you tolerating that you shouldn\'t be?\"</li><li>\"What does your team celebrate? What do they avoid?\"</li></ul><h4 style="color:var(--al);margin-top:12px">Change and Growth</h4><ul><li>\"What\'s changing in the next 6 months that your team isn\'t ready for?\"</li><li>\"Where do you need people to step up that they haven\'t?\"</li><li>\"What\'s the biggest bottleneck to your team operating faster?\"</li><li>\"What would a world-class team in this function look like?\"</li></ul>','Questions')}
+
+${ac('Post-Meeting Debrief','<p style="margin-bottom:12px">The debrief is where you hold yourself accountable to growing as a strategic partner. Be brutally honest here \u2014 no one sees this but you.</p><div class="fg"><label>Key decisions made:</label>'+ta('bp1','What was decided? Who owns what?',2)+'</div><div class="fg"><label>My action items (with deadlines):</label>'+ta('bp2','Be specific. Include dates.',2)+'</div><div class="fg"><label>Their action items (for follow-up):</label>'+ta('bp3','What did they commit to? When will you check in?',2)+'</div><div class="pc"><div class="pq">Strategic partner or order-taker: Which one were you today?</div><div class="ph">This is the most important question. Did you challenge? Did you bring insights? Did you change how they thought about something? Or did you take notes and promised to \"look into it\"? A strategic partner shapes the conversation. An order-taker transcribes it.</div>'+ta('bp4','Be honest with yourself.',3)+'</div><div class="pc"><div class="pq">What would I do differently next time?</div><div class="ph">Every meeting is practice. What question should you have asked? What data should you have brought? What courage should you have shown?</div>'+ta('bp5','One specific thing to improve next time.',2)+'</div><div class="pc"><div class="pq">What did I learn about this leader that I didn\'t know before?</div><div class="ph">Every interaction reveals something new about what they value, how they think, what stresses them. Capture it. Over time, this builds the deep understanding that separates good HR partners from great ones.</div>'+ta('bp6','New insight about this leader.',2)+'</div>','Debrief')}
+
+<div class="cd"><button class="bt" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+// ===== STRATEGIC THINKING =====
+h+=`<div class="sc" id="s-str"><div class="hd"><h1><i class="fas fa-brain"></i> Strategic Thinking</h1><p>Break the detail trap. Build the strategy muscle.</p></div>
+<div class="cd"><h3>The Detail Trap</h3>
+<div class="cc"><h4>\u26A0\uFE0F Your Pattern</h4><p>You default to ground level. Strategic thinkers operate at <strong>multiple altitudes</strong>\u2014choosing intentionally instead of defaulting.</p></div>
+<div class="qb"><p>"The essence of strategy is choosing what NOT to do."</p><div class="qa">\u2014 Michael Porter</div></div></div>
+${ac('\u{1F4A1} Daily: Altitude Check','<div class="ec"><h4>\u{1F6E9}\uFE0F 30,000 ft \u2014 Industry</h4>'+ta('s30','Trends, disruptions, competitors...',3)+'</div><div class="ec"><h4>\u2708\uFE0F 15,000 ft \u2014 Organization</h4>'+ta('s15','Strategic priorities, vulnerabilities...',3)+'</div><div class="ec"><h4>\u{1F681} 5,000 ft \u2014 Team</h4>'+ta('s5k','Is our work aligned? What should we stop?',3)+'</div><div class="ec"><h4>\u{1F3E0} Ground \u2014 Tactical</h4>'+ta('sgd','Today\'s fires (spend least time here)',2)+'</div>')}
+${ac('\u{1F50D} Weekly: Pattern Recognition','<div class="pc"><div class="pq">3 things that seem unrelated but might be connected?</div>'+ta('spt','',4)+'</div><div class="pc"><div class="pq">Weak signal that could become major in 6 months?</div>'+ta('ssg','',3)+'</div><div class="pc"><div class="pq">What decision did I make by DEFAULT vs. DELIBERATELY?</div>'+ta('sdf','',3)+'</div>')}
+${ac('\u{1F3AF} Monthly: Strategic Questions','<div class="pc"><div class="pq">ONE thing in 12 months that creates most value?</div>'+ta('sm1','Leverage, not activity...',3)+'</div><div class="pc"><div class="pq">What would our smartest competitor do with our dept?</div>'+ta('sm2','',3)+'</div><div class="pc"><div class="pq">What am I spending time on with ZERO strategic value?</div>'+ta('sm3','',3)+'</div><div class="pc"><div class="pq">What if 3-year goals had to be done in 12 months?</div>'+ta('sm4','',3)+'</div><div class="pc"><div class="pq">What\'s the brutal fact nobody wants to confront?</div>'+ta('sm6','',3)+'</div>')}
+${ac('\u{1F6E0}\uFE0F Tools','<div class="cd" style="border-left:3px solid var(--ok)"><h4>Pre-Mortem</h4><p>It\'s 12 months from now and it FAILED. What went wrong?</p>'+ta('spr','',3)+'</div><div class="cd" style="border-left:3px solid var(--wn)"><h4>Second-Order Thinking</h4><div class="fg"><label>Decision:</label>'+ta('s2d','',1)+'</div><div class="fg"><label>1st-order:</label>'+ta('s21','Immediate...',1)+'</div><div class="fg"><label>2nd-order:</label>'+ta('s22','Then what?',1)+'</div><div class="fg"><label>3rd-order:</label>'+ta('s23','Then what after that?',1)+'</div></div><div class="cd" style="border-left:3px solid var(--er)"><h4>"Stop Doing" List</h4><p>More important than a to-do list.</p>'+ta('sst','What am I going to STOP?',3)+'</div>')}
+${ac('\u{1F4CA} Weekly Scorecard','<div class="fg"><label>Strategic vs tactical hours:</label>'+ta('shr','e.g., 4 strategic / 36 tactical',1)+'</div><div class="fg"><label>Times I caught the detail trap:</label>'+ta('sca','',1)+'</div><div class="fg"><label>Strategic conversation I initiated:</label>'+ta('scv','',2)+'</div><div class="fg"><label>Thing I delegated:</label>'+ta('sdl','',2)+'</div><div class="fg"><label>Biggest strategic insight:</label>'+ta('sin','',3)+'</div>')}
+<div class="cd"><h3><i class="fas fa-rocket"></i> Your Commitment</h3>
+<div class="pc"><div class="pq">Specific commitment to develop strategic thinking:</div><div class="ph">"I will spend 15 min each morning on the Altitude Check before email."</div>${ta('scm','',3)}</div>
+<button class="bt" onclick="sv()"><i class="fas fa-save"></i> Save</button></div></div>`;
+
+E.innerHTML=h;
+}
+
+function calcA(){
+const nms=['Vision','Presence','Humility','Growth','Focus','Clarity','Courage','Adaptability','Connection','Momentum'];
+let tot=0,res='<div class="g2">';
+nms.forEach((nm,pi)=>{let sum=0;for(let qi=0;qi<5;qi++)sum+=parseInt(g('va'+pi+''+qi)||5);tot+=sum;
+const el=document.getElementById('ps'+pi);if(el)el.textContent=sum;
+const col=sum>=45?'var(--ok)':sum>=35?'var(--in)':sum>=25?'var(--wn)':'var(--er)';
+const lv=sum>=45?'Strength':sum>=35?'Competent':sum>=25?'Development':'Urgent Gap';
+res+='<div style="background:var(--bg);padding:12px;border-radius:8px;border-left:3px solid '+col+';margin-bottom:8px"><strong style="color:'+col+'">'+nm+': '+sum+'/50</strong><br><span style="font-size:.8rem;color:var(--t3)">'+lv+'</span></div>'});
+res+='</div><div style="text-align:center;margin-top:16px;padding:16px;background:var(--bg);border-radius:8px"><strong style="font-size:1.2rem;color:var(--al)">Total: '+tot+'/500</strong></div>';
+document.getElementById('ar').innerHTML=res;sv()}
+
+function go(id){
+document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+const ni=document.querySelector('.ni[data-s="'+id+'"]');if(ni)ni.classList.add('on');
+document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+const el=document.getElementById('s-'+id);if(el)el.classList.add('on');
+window.scrollTo(0,0)}
+
+document.addEventListener('DOMContentLoaded',()=>{
+const n=new Date();
+document.getElementById('dt').textContent=n.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const h=n.getHours();
+document.getElementById('gr').textContent=(h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening');
+document.querySelectorAll('.ni').forEach(i=>i.addEventListener('click',()=>{go(i.dataset.s);document.getElementById('sb').classList.remove('open')}));
+document.getElementById('mb').addEventListener('click',()=>document.getElementById('sb').classList.toggle('open'));
+mkSections()});
+</script>
+</body>
+<!-- PASTE THIS RIGHT BEFORE </html> - REPLACES PREVIOUS PATCH -->
+<script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+<style>
+.hist-item{padding:12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.hist-item:hover{background:rgba(108,99,255,.08);border-color:var(--ac)}
+.hist-date{font-weight:600;color:var(--ac);font-size:13px;margin-bottom:4px}
+.hist-preview{font-size:12px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-list{max-height:500px;overflow-y:auto}
+.snap-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center}
+.snap-box{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:24px;width:400px;max-width:90vw}
+.snap-box h3{color:var(--al);margin-bottom:16px}
+.snap-box input{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--t1);font-size:.9rem;margin-bottom:16px}
+.snap-box input:focus{outline:none;border-color:var(--ac)}
+.snap-btns{display:flex;gap:8px;justify-content:flex-end}
+</style>
+<script>
+(function(){
+
+// 1. ADD HISTORY TO SIDEBAR
+var ul=document.getElementById("nl");
+if(ul){
+  var li=document.createElement("li");
+  li.className="ni";
+  li.setAttribute("data-s","hist");
+  li.innerHTML='<i class="fas fa-clock-rotate-left"></i><span>History</span>';
+  li.addEventListener("click",function(){go("hist");var sb=document.getElementById("sb");if(sb)sb.classList.remove("open");});
+  ul.appendChild(li);
+}
+
+// 2. HOOK INTO mkSections
+var _origMk=mkSections;
+mkSections=function(){
+  _origMk();
+  var ct=document.getElementById("ct");
+  if(!ct)return;
+
+  // Remove old hist section if exists (prevents duplicates)
+  var old=document.getElementById("s-hist");
+  if(old)old.remove();
+
+  var hd=document.createElement("div");
+  hd.className="sc";
+  hd.id="s-hist";
+  hd.innerHTML='<div class="hd"><h1><i class="fas fa-clock-rotate-left"></i> History</h1><p>Your saved reflections and reports.</p></div>'
+    +'<div class="cd"><h3>Save Current Work</h3><p style="color:var(--t2);margin-bottom:12px">Fill out a section, then save a snapshot.</p>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button class="bt" onclick="promptSave(\x27daily\x27)"><i class="fas fa-sun"></i> Daily Reflections</button>'
+    +'<button class="bt" onclick="promptSave(\x27a3\x27)" style="background:var(--in)"><i class="fas fa-file-lines"></i> A3 Report</button>'
+    +'<button class="bt" onclick="promptSave(\x27obs\x27)" style="background:var(--ok)"><i class="fas fa-clipboard-check"></i> Coaching Eval</button>'
+    +'<button class="bt" onclick="promptSave(\x27ceo\x27)" style="background:var(--wn)"><i class="fas fa-user-tie"></i> CEO Prep</button>'
+    +'<button class="bt" onclick="promptSave(\x27bl\x27)" style="background:var(--or)"><i class="fas fa-briefcase"></i> BL Prep</button>'
+    +'</div></div>'
+    +'<div class="cd"><h3>Saved Entries</h3><div id="histList"></div></div>'
+    +'<div class="cd"><h3>Manage</h3><button class="bt" style="background:var(--er)" onclick="if(confirm(\x27Delete ALL history?\x27)){localStorage.removeItem(\x27ves_history\x27);renderHistList()}"><i class="fas fa-trash"></i> Clear All History</button></div>';
+  ct.appendChild(hd);
+
+  // Add export bars to sections
+  var secs=[["s-dash","Daily Reflection","daily"],["s-a3","A3 Report","a3"],["s-obs","Observed Coaching Feedback","obs"],["s-ceo","CEO Meeting Prep","ceo"],["s-bl","Business Leader Prep","bl"],["s-str","Strategic Thinking","str"],["s-fw","Flywheel","fw"]];
+  secs.forEach(function(arr){
+    var sec=document.getElementById(arr[0]);
+    if(!sec)return;
+    // Don't add duplicate export bars
+    if(sec.querySelector(".xbar"))return;
+    var bar=document.createElement("div");
+    bar.className="cd xbar";
+    bar.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px 24px";
+    bar.innerHTML='<span style="font-weight:600;color:var(--al);margin-right:auto"><i class="fas fa-download"></i> Export</span>'
+      +'<button class="bt" onclick="exportDocx(\x27'+arr[1]+'\x27,\x27'+arr[0]+'\x27)"><i class="fas fa-file-word"></i> Export to DOCX</button>'
+      +'<button class="bt" style="background:var(--ok)" onclick="promptSave(\x27'+arr[2]+'\x27)"><i class="fas fa-save"></i> Save to History</button>';
+    sec.appendChild(bar);
+  });
+};
+
+// 3. SAVE PROMPT WITH NAME INPUT
+window.promptSave=function(type){
+  var names={daily:"Daily Reflection",a3:"A3 Report",obs:"Coaching Observation",ceo:"CEO Meeting Prep",bl:"Business Leader Prep",str:"Strategic Thinking",fw:"Flywheel"};
+  var modal=document.createElement("div");
+  modal.className="snap-modal";
+  modal.innerHTML='<div class="snap-box">'
+    +'<h3><i class="fas fa-save"></i> Save '+names[type]+'</h3>'
+    +'<label style="display:block;font-size:.8rem;color:var(--t2);margin-bottom:4px">Name this entry:</label>'
+    +'<input type="text" id="snapName" placeholder="e.g. Monday morning reflection, Q1 A3, Session with Alex..." autofocus>'
+    +'<div class="snap-btns">'
+    +'<button class="bt" style="background:var(--bd);color:var(--t1)" onclick="this.closest(\x27.snap-modal\x27).remove()">Cancel</button>'
+    +'<button class="bt" onclick="doSave(\x27'+type+'\x27)"><i class="fas fa-check"></i> Save</button>'
+    +'</div></div>';
+  document.body.appendChild(modal);
+  setTimeout(function(){document.getElementById("snapName").focus();},100);
+};
+
+// 4. ACTUAL SAVE
+window.doSave=function(type){
+  var nameInput=document.getElementById("snapName");
+  var entryName=nameInput?nameInput.value.trim():"";
+  var modal=document.querySelector(".snap-modal");
+  if(modal)modal.remove();
+  saveSnapshot(type,entryName);
+};
+
+window.saveSnapshot=function(type,entryName){
+  var names={daily:"Daily Reflection",a3:"A3 Report",obs:"Coaching Observation",ceo:"CEO Meeting Prep",bl:"Business Leader Prep",str:"Strategic Thinking",fw:"Flywheel"};
+  var sids={daily:"s-dash",a3:"s-a3",obs:"s-obs",ceo:"s-ceo",bl:"s-bl",str:"s-str",fw:"s-fw"};
+  var sec=document.getElementById(sids[type]||"s-dash");
+  var fields={};
+  if(sec){
+    sec.querySelectorAll("textarea").forEach(function(ta){
+      if(ta.value.trim()){
+        var label="Field";
+        var pc=ta.closest(".pc");
+        if(pc){var pq=pc.querySelector(".pq");if(pq)label=pq.textContent.trim();}
+        if(label==="Field"){var fg=ta.closest(".fg");if(fg){var lb=fg.querySelector("label");if(lb)label=lb.textContent.trim();}}
+        if(label==="Field"){var prev=ta.previousElementSibling;if(prev&&prev.tagName==="LABEL")label=prev.textContent.trim();}
+        fields[label]=ta.value.trim();
+      }
+    });
+  }
+  var snap={timestamp:new Date().toISOString(),date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),time:new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}),type:type,typeName:names[type]||type,entryName:entryName||"",fields:fields,fieldCount:Object.keys(fields).length};
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  hist.unshift(snap);
+  if(hist.length>200)hist.splice(200);
+  localStorage.setItem("ves_history",JSON.stringify(hist));
+  alert("Saved "+snap.fieldCount+" fields to History!");
+  renderHistList();
+};
+
+// 5. DOCX EXPORT
+window.exportDocx=function(title,sectionId){
+  if(typeof docx==="undefined"){alert("DOCX library still loading. Try again in a few seconds.");return;}
+  var sec=document.getElementById(sectionId);
+  if(!sec)return;
+  var D=docx;
+  var children=[
+    new D.Paragraph({children:[new D.TextRun({text:title,bold:true,size:48,font:"Calibri"})],spacing:{after:200}}),
+    new D.Paragraph({children:[new D.TextRun({text:"Date: "+new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),italics:true,size:20,color:"666666",font:"Calibri"})],spacing:{after:400}})
+  ];
+  sec.querySelectorAll("h1,h3,label,textarea,li").forEach(function(el){
+    if(el.closest(".xbar"))return;
+    if(el.tagName==="TEXTAREA"){
+      var val=el.value.trim();
+      if(val)children.push(new D.Paragraph({children:[new D.TextRun({text:val,size:22,font:"Calibri"})],spacing:{after:120},indent:{left:360}}));
+    }else if(el.tagName==="H1"){
+      children.push(new D.Paragraph({children:[new D.TextRun({text:el.textContent.trim(),bold:true,size:36,font:"Calibri",color:"6c63ff"})],spacing:{before:300,after:150}}));
+    }else if(el.tagName==="H3"){
+      children.push(new D.Paragraph({children:[new D.TextRun({text:el.textContent.trim(),bold:true,size:28,font:"Calibri",color:"8b83ff"})],spacing:{before:240,after:100}}));
+    }else if(el.tagName==="LABEL"){
+      children.push(new D.Paragraph({children:[new D.TextRun({text:el.textContent.trim(),bold:true,size:22,font:"Calibri"})],spacing:{before:160,after:40}}));
+    }else if(el.tagName==="LI"){
+      children.push(new D.Paragraph({children:[new D.TextRun({text:el.textContent.trim(),size:22,font:"Calibri"})],bullet:{level:0},spacing:{after:60}}));
+    }
+  });
+  var doc=new D.Document({sections:[{properties:{},children:children}]});
+  D.Packer.toBlob(doc).then(function(blob){
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=title.replace(/\s+/g,"_")+"_"+new Date().toISOString().split("T")[0]+".docx";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+};
+
+// 6. RENDER HISTORY LIST
+window.renderHistList=function(){
+  var el=document.getElementById("histList");
+  if(!el)return;
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  if(hist.length===0){el.innerHTML='<p style="text-align:center;padding:30px;color:var(--t3)">No saved entries yet.</p>';return;}
+  var h='<div class="hist-list">';
+  hist.forEach(function(snap,idx){
+    var keys=Object.keys(snap.fields);
+    var preview=keys.length>0?snap.fields[keys[0]].substring(0,100):"["+snap.fieldCount+" fields]";
+    var title=snap.entryName?snap.entryName:snap.typeName;
+    h+='<div class="hist-item" onclick="viewSnapshot('+idx+')">';
+    h+='<div class="hist-date">'+title+' &#8212; '+snap.date+' at '+snap.time+'</div>';
+    if(snap.entryName)h+='<div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">'+snap.typeName+'</div>';
+    h+='<div class="hist-preview">'+preview+'</div></div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+};
+
+// 7. VIEW SNAPSHOT - shows detail inside s-hist
+window.viewSnapshot=function(idx){
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  var snap=hist[idx];if(!snap)return;
+  // Make sure hist section is visible
+  document.querySelectorAll(".sc").forEach(function(s){s.classList.remove("on")});
+  var hs=document.getElementById("s-hist");
+  if(!hs)return;
+  hs.classList.add("on");
+  document.querySelectorAll(".ni").forEach(function(n){n.classList.remove("on")});
+  var title=snap.entryName?snap.entryName:snap.typeName;
+  var h='<div class="hd"><h1><i class="fas fa-clock-rotate-left"></i> '+title+'</h1></div>'
+    +'<div class="cd"><button class="bt" style="background:var(--bd);color:var(--t1)" onclick="backToHistList()"><i class="fas fa-arrow-left"></i> Back to History</button></div>'
+    +'<div class="cd">';
+  if(snap.entryName)h+='<p style="color:var(--t3);font-size:.8rem;margin-bottom:4px">'+snap.typeName+'</p>';
+  h+='<p style="color:var(--t2);margin-bottom:16px">'+snap.date+' at '+snap.time+'</p>';
+  Object.keys(snap.fields).forEach(function(key){
+    h+='<div style="margin-bottom:16px"><label style="display:block;font-size:.8rem;color:var(--al);margin-bottom:4px;font-weight:600">'+key+'</label>';
+    h+='<div style="padding:10px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;color:var(--t1);white-space:pre-wrap;font-size:.85rem">'+snap.fields[key]+'</div></div>';
+  });
+  h+='<div style="display:flex;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)">';
+  h+='<button class="bt" onclick="exportSnapshotDocx('+idx+')"><i class="fas fa-file-word"></i> Export to DOCX</button>';
+  h+='<button class="bt" style="background:var(--er)" onclick="deleteSnapshot('+idx+')"><i class="fas fa-trash"></i> Delete</button>';
+  h+='</div></div>';
+  hs.innerHTML=h;
+  window.scrollTo(0,0);
+};
+
+// 8. BACK TO HISTORY LIST - rebuilds the history section properly
+window.backToHistList=function(){
+  // Remove the old s-hist so mkSections rebuilds it fresh
+  var old=document.getElementById("s-hist");
+  if(old)old.remove();
+  // Rebuild
+  mkSections();
+  // Now show it
+  document.querySelectorAll(".sc").forEach(function(s){s.classList.remove("on")});
+  var hs=document.getElementById("s-hist");
+  if(hs)hs.classList.add("on");
+  document.querySelectorAll(".ni").forEach(function(n){
+    n.classList.remove("on");
+    if(n.getAttribute("data-s")==="hist")n.classList.add("on");
+  });
+  setTimeout(renderHistList,50);
+  window.scrollTo(0,0);
+};
+
+// 9. DELETE SNAPSHOT
+window.deleteSnapshot=function(idx){
+  if(!confirm("Delete this entry?"))return;
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  hist.splice(idx,1);
+  localStorage.setItem("ves_history",JSON.stringify(hist));
+  backToHistList();
+};
+
+// 10. EXPORT SNAPSHOT DOCX
+window.exportSnapshotDocx=function(idx){
+  if(typeof docx==="undefined"){alert("DOCX library loading...");return;}
+  var hist=JSON.parse(localStorage.getItem("ves_history")||"[]");
+  var snap=hist[idx];if(!snap)return;
+  var D=docx;
+  var title=snap.entryName?snap.entryName:snap.typeName;
+  var children=[
+    new D.Paragraph({children:[new D.TextRun({text:title,bold:true,size:48,font:"Calibri"})],spacing:{after:100}}),
+    new D.Paragraph({children:[new D.TextRun({text:snap.typeName+" \u2014 "+snap.date+" at "+snap.time,italics:true,size:22,color:"666666",font:"Calibri"})],spacing:{after:400}})
+  ];
+  Object.keys(snap.fields).forEach(function(key){
+    children.push(new D.Paragraph({children:[new D.TextRun({text:key,bold:true,size:24,font:"Calibri"})],spacing:{before:200,after:60}}));
+    children.push(new D.Paragraph({children:[new D.TextRun({text:snap.fields[key],size:22,font:"Calibri"})],spacing:{after:120}}));
+  });
+  var doc=new D.Document({sections:[{properties:{},children:children}]});
+  D.Packer.toBlob(doc).then(function(blob){
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=title.replace(/\s+/g,"_")+"_"+snap.date.replace(/[\s,]+/g,"_")+".docx";
+    a.click();
+  });
+};
+
+// 11. HOOK go() FOR HISTORY
+var _origGo=go;
+go=function(id){
+  if(id==="hist"&&!document.getElementById("s-hist"))mkSections();
+  _origGo(id);
+  if(id==="hist")setTimeout(renderHistList,100);
+};
+
+})();
+</script>
+
+</html>
